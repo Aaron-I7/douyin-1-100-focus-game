@@ -1,0 +1,22 @@
+{
+    "setting": {
+        "urlCheck": true,
+        "es6": true,
+        "postcss": true,
+        "minified": true,
+        "newFeature": true,
+        "autoCompile": true,
+        "compileHotReLoad": true,
+        "nativeCompile": true
+    },
+    "appid": "tta5b0d30d3bd1529402",
+    "projectname": "1-2-100",
+    "douyinProjectType": "native",
+    "cloudfunctionRoot": "cloudfunctions/",
+    "condition": {
+        "game": {
+            "current": -1,
+            "list": []
+        }
+    }
+}
