@@ -19,34 +19,34 @@
 
 ### 阶段 1: 代码清理与重构
 
-- [ ] 1. 移除黑暗模式相关代码
-  - [ ] 1.1 删除 RenderEngine 中的 renderDarkMode 方法
+- [x] 1. 移除黑暗模式相关代码
+  - [x] 1.1 删除 RenderEngine 中的 renderDarkMode 方法
     - 移除 renderDarkMode 函数
     - 移除 renderSpotlight 函数
     - 移除 renderTargetRing 函数
     - 移除 offscreenCanvas 相关代码
     - _需求: 6.1_
 
-  - [ ] 1.2 删除连击系统代码
+  - [x] 1.2 删除连击系统代码
     - 从 GameState 移除 combo 字段
     - 从 GameManager 移除连击逻辑
     - 从 RenderEngine 移除 showComboFeedback 方法
     - 从 HUD 移除连击显示
     - _需求: 6.1_
 
-  - [ ] 1.3 简化 UIManager 移除黑暗模式选项
+  - [x] 1.3 简化 UIManager 移除黑暗模式选项
     - 删除 renderModeSelectScreen 方法
     - 更新主菜单不显示模式选择
     - 移除 selectedMode 状态
     - _需求: 16.1, 16.2_
 
-  - [ ] 1.4 更新 GameManager 移除模式选择逻辑
+  - [x] 1.4 更新 GameManager 移除模式选择逻辑
     - 移除 mode 参数（始终使用明亮模式）
     - 简化游戏初始化流程
     - 更新状态机（移除 modeSelect 状态）
     - _需求: 6.1_
 
-  - [ ] 1.5 清理 RenderEngine 颜色主题
+  - [x] 1.5 清理 RenderEngine 颜色主题
     - 移除 colors.dark 主题定义
     - 仅保留 colors.bright 主题
     - 更新所有渲染方法使用单一主题
@@ -54,14 +54,14 @@
 
 ### 阶段 2: 实现关卡系统
 
-- [ ] 2. 创建关卡管理器（LevelManager）
-  - [ ] 2.1 创建 LevelManager 类
+- [-] 2. 创建关卡管理器（LevelManager）
+  - [x] 2.1 创建 LevelManager 类
     - 定义关卡配置（Level 1: 10 cells, Level 2: 100 cells）
     - 实现 getCurrentLevelConfig() 方法
     - 实现关卡状态管理
     - _需求: 3.1, 3.2, 3.3_
 
-  - [ ] 2.2 实现关卡完成逻辑
+  - [x] 2.2 实现关卡完成逻辑
     - 实现 completeLevel() 方法
     - 保存关卡完成状态到云端
     - 第二关完成时解锁自选模式
@@ -71,14 +71,14 @@
     - **Property 2: 关卡数字数量正确性**
     - **验证需求: 3.2, 3.3**
 
-  - [ ] 2.4 实现关卡过渡管理器（TransitionManager）
+  - [x] 2.4 实现关卡过渡管理器（TransitionManager）
     - 创建 TransitionManager 类
     - 实现 showLevelTransition() 方法
     - 显示鼓励文字动画
     - 实现淡入淡出效果
     - _需求: 3.6_
 
-  - [ ] 2.5 更新 VoronoiGenerator 支持可变数量
+  - [x] 2.5 更新 VoronoiGenerator 支持可变数量
     - 修改构造函数接受 numSites 参数（10 或 100）
     - 更新 generateSites() 支持 10 个 Cell
     - 更新 assignNumbers() 支持 1-10 或 1-100

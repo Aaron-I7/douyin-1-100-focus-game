@@ -17,8 +17,6 @@ class GameManager {
     // 游戏数据
     this.currentNumber = 1;
     this.errors = 0;
-    this.combo = 0;
-    this.maxCombo = 0;
     this.elapsedTime = 0;
     this.timeLeft = 0;
     
@@ -87,8 +85,6 @@ class GameManager {
     this.state = 'playing';
     this.currentNumber = 1;
     this.errors = 0;
-    this.combo = 0;
-    this.maxCombo = 0;
     this.elapsedTime = 0;
     this.timeLeft = this.difficulty;
     
@@ -172,15 +168,9 @@ class GameManager {
    */
   handleCorrectClick(cell) {
     cell.done = true;
-    this.combo++;
-    this.maxCombo = Math.max(this.maxCombo, this.combo);
     
     // 视觉反馈
-    if (this.mode === 'dark' && this.combo >= 5) {
-      this.renderEngine.showComboFeedback(cell, this.combo);
-    } else {
-      this.renderEngine.showCorrectFeedback(cell, this.mode);
-    }
+    this.renderEngine.showCorrectFeedback(cell, this.mode);
     
     // 触觉反馈
     this.touchHandler.vibrate('light');
@@ -198,7 +188,6 @@ class GameManager {
    */
   handleWrongClick(cell) {
     this.errors++;
-    this.combo = 0;
     
     // 视觉反馈
     this.renderEngine.showErrorFeedback(cell, this.mode);
@@ -247,7 +236,6 @@ class GameManager {
           difficulty: this.difficulty,
           currentNumber: this.currentNumber,
           errors: this.errors,
-          combo: this.combo,
           elapsedTime: this.elapsedTime,
           timeLeft: this.timeLeft
         };
@@ -278,8 +266,7 @@ class GameManager {
     // TODO: 显示结果界面
     console.log('Game stats:', {
       time: this.elapsedTime,
-      errors: this.errors,
-      maxCombo: this.maxCombo
+      errors: this.errors
     });
   }
 

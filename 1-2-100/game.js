@@ -711,8 +711,7 @@ class UIManager {
     // 使用逻辑尺寸，而不是物理像素尺寸
     this.width = screenAdapter.screenWidth;
     this.height = screenAdapter.screenHeight;
-    this.currentScreen = 'start'; // start | modeSelect | difficultySelect | game | result
-    this.selectedMode = null;
+    this.currentScreen = 'start'; // start | difficultySelect | game | result
     this.selectedDifficulty = null;
     this.buttons = [];
     this.onStartGame = null;
@@ -792,63 +791,7 @@ class UIManager {
     console.log('renderStartScreen执行完成，按钮数量:', this.buttons.length);
   }
 
-  renderModeSelectScreen() {
-    const ctx = this.ctx;
-    const w = this.width;
-    const h = this.height;
-    
-    // 渐变背景
-    const gradient = ctx.createLinearGradient(0, 0, 0, h);
-    gradient.addColorStop(0, '#E3F2FD');
-    gradient.addColorStop(1, '#BBDEFB');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, w, h);
-    
-    this.drawDecorativeCircles(ctx);
-    
-    // 标题
-    ctx.fillStyle = '#1976D2';
-    ctx.font = `bold ${Math.floor(w * 0.07)}px Arial, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText('选择游戏模式', w / 2, h * 0.2);
-    
-    // 明亮模式按钮
-    this.drawModeCard(ctx, {
-      x: w * 0.1,
-      y: h * 0.35,
-      width: w * 0.8,
-      height: 100,
-      icon: '☀️',
-      title: '明亮视野',
-      desc: '清晰可见所有数字',
-      color: '#4CAF50',
-      id: 'bright'
-    });
-    
-    // 黑暗模式按钮
-    this.drawModeCard(ctx, {
-      x: w * 0.1,
-      y: h * 0.55,
-      width: w * 0.8,
-      height: 100,
-      icon: '🌙',
-      title: '黑暗视野',
-      desc: '手电筒照亮，挑战更高难度',
-      color: '#5C6BC0',
-      id: 'dark'
-    });
-    
-    // 返回按钮
-    this.drawSmallButton(ctx, {
-      x: 20,
-      y: h - 70,
-      width: 80,
-      height: 40,
-      text: '返回',
-      color: '#9E9E9E',
-      id: 'back'
-    });
-  }
+
 
   renderDifficultySelectScreen() {
     const ctx = this.ctx;
@@ -1007,51 +950,7 @@ class UIManager {
     });
   }
 
-  drawModeCard(ctx, card) {
-    ctx.save();
-    
-    // 卡片阴影
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
-    ctx.shadowBlur = 15;
-    ctx.shadowOffsetY = 5;
-    
-    // 卡片背景
-    ctx.fillStyle = '#FFFFFF';
-    this.roundRect(ctx, card.x, card.y, card.width, card.height, 15);
-    ctx.fill();
-    
-    ctx.restore();
-    
-    // 左侧图标
-    ctx.font = `${Math.floor(this.width * 0.12)}px Arial`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(card.icon, card.x + 60, card.y + card.height / 2);
-    
-    // 右侧文字
-    ctx.textAlign = 'left';
-    ctx.fillStyle = '#333333';
-    ctx.font = `bold ${Math.floor(this.width * 0.055)}px Arial, sans-serif`;
-    ctx.fillText(card.title, card.x + 120, card.y + card.height / 2 - 15);
-    
-    ctx.fillStyle = '#999999';
-    ctx.font = `${Math.floor(this.width * 0.035)}px Arial, sans-serif`;
-    ctx.fillText(card.desc, card.x + 120, card.y + card.height / 2 + 15);
-    
-    // 右侧箭头
-    ctx.fillStyle = card.color;
-    ctx.font = `${Math.floor(this.width * 0.06)}px Arial`;
-    ctx.textAlign = 'right';
-    ctx.fillText('>', card.x + card.width - 20, card.y + card.height / 2);
-    
-    this.buttons.push({
-      id: card.id,
-      x: card.x,
-      y: card.y,
-      width: card.width,
-      height: card.height
-    });
-  }
+
 
   drawDifficultyButton(ctx, btn) {
     ctx.save();
@@ -1212,10 +1111,6 @@ class UIManager {
         this.renderStartScreen();
         console.log('开始界面渲染完成');
         break;
-      case 'modeSelect':
-        console.log('渲染模式选择界面');
-        this.renderModeSelectScreen();
-        break;
       case 'difficultySelect':
         console.log('渲染难度选择界面');
         this.renderDifficultySelectScreen();
@@ -1238,23 +1133,21 @@ class GameManager {
     this.ctx = ctx;
     this.screenAdapter = screenAdapter;
     this.state = 'menu';
-    this.mode = 'bright';
+    this.mode = 'bright'; // 始终使用明亮模式
     this.difficulty = 180;
     this.currentNumber = 1;
     this.errors = 0;
-    this.combo = 0;
-    this.maxCombo = 0;
     this.elapsedTime = 0;
     this.timeLeft = 0;
     this.cells = [];
     this.timer = null;
     this.animationFrameId = null;
-    this.mousePos = { x: canvas.width / 2, y: canvas.height / 2 };
     this.voronoiGenerator = null;
     this.gridGenerator = null;
     this.renderEngine = null;
     this.touchHandler = null;
     this.uiManager = null;
+    this.levelManager = null;
     this.currentScreen = 'start';
   }
 
@@ -1270,6 +1163,7 @@ class GameManager {
       // this.renderEngine.initHDCanvas();
       
       this.uiManager = new UIManager(this.canvas, this.ctx, this.screenAdapter);
+      this.levelManager = new LevelManager();
       
       // 创建全局TouchHandler，传入gameManager引用
       this.touchHandler = new TouchHandler(this.canvas, [], this);
@@ -1297,24 +1191,12 @@ class GameManager {
     
     switch (btn.id) {
       case 'start':
-        this.currentScreen = 'modeSelect';
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0); // 重置缩放
-        this.uiManager.render('modeSelect');
-        break;
-        
-      case 'bright':
-        this.mode = 'bright';
+        this.mode = 'bright'; // 默认使用明亮模式
         this.currentScreen = 'difficultySelect';
         this.ctx.setTransform(1, 0, 0, 1, 0, 0); // 重置缩放
         this.uiManager.render('difficultySelect');
         break;
-        
-      case 'dark':
-        this.mode = 'dark';
-        this.currentScreen = 'difficultySelect';
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0); // 重置缩放
-        this.uiManager.render('difficultySelect');
-        break;
+
         
       case 'free':
         this.difficulty = 0;
@@ -1338,10 +1220,6 @@ class GameManager {
         
       case 'back':
         if (this.currentScreen === 'difficultySelect') {
-          this.currentScreen = 'modeSelect';
-          this.ctx.setTransform(1, 0, 0, 1, 0, 0); // 重置缩放
-          this.uiManager.render('modeSelect');
-        } else if (this.currentScreen === 'modeSelect') {
           this.currentScreen = 'start';
           this.ctx.setTransform(1, 0, 0, 1, 0, 0); // 重置缩放
           this.uiManager.render('start');
@@ -1386,10 +1264,17 @@ class GameManager {
     this.state = 'playing';
     this.currentNumber = 1;
     this.errors = 0;
-    this.combo = 0;
-    this.maxCombo = 0;
     this.elapsedTime = 0;
     this.timeLeft = this.difficulty;
+    
+    // 根据当前关卡生成对应数量的 Cell
+    const currentLevelConfig = this.levelManager.getCurrentLevelConfig();
+    const cellCount = currentLevelConfig.cellCount;
+    
+    // 更新生成器的 numSites
+    this.voronoiGenerator.numSites = cellCount;
+    this.gridGenerator.numCells = cellCount;
+    
     this.cells = this.generateVoronoiWithRetry(3);
     const bounds = this.screenAdapter.getGameBounds();
     for (const cell of this.cells) {
@@ -1405,12 +1290,11 @@ class GameManager {
     // 更新TouchHandler的cells和回调
     this.touchHandler.updateCells(this.cells);
     this.touchHandler.onCellClick = (cell) => this.handleCellClick(cell);
-    this.touchHandler.onMouseMove = (pos) => this.handleMouseMove(pos);
     this.touchHandler.setEnabled(true);
     
     this.startTimer();
     this.startRenderLoop();
-    console.log('Game started successfully');
+    console.log(`Game started successfully - Level ${currentLevelConfig.id} (${cellCount} cells)`);
   }
 
   generateVoronoiWithRetry(maxRetries) {
@@ -1445,30 +1329,24 @@ class GameManager {
 
   handleCorrectClick(cell) {
     cell.done = true;
-    this.combo++;
-    this.maxCombo = Math.max(this.maxCombo, this.combo);
-    if (this.mode === 'dark' && this.combo >= 5) {
-      this.renderEngine.showComboFeedback(cell, this.combo);
-    } else {
-      this.renderEngine.showCorrectFeedback(cell, this.mode);
-    }
+    this.renderEngine.showCorrectFeedback(cell, this.mode);
     this.touchHandler.vibrate('light');
     this.currentNumber++;
-    if (this.currentNumber > 100) {
+    
+    // 检查是否完成当前关卡
+    const currentLevelConfig = this.levelManager.getCurrentLevelConfig();
+    if (this.currentNumber > currentLevelConfig.cellCount) {
       this.winGame();
     }
   }
 
   handleWrongClick(cell) {
     this.errors++;
-    this.combo = 0;
     this.renderEngine.showErrorFeedback(cell, this.mode);
     this.touchHandler.vibrate('heavy');
   }
 
-  handleMouseMove(pos) {
-    this.mousePos = pos;
-  }
+
 
   startTimer() {
     this.timer = setInterval(() => {
@@ -1493,15 +1371,11 @@ class GameManager {
           difficulty: this.difficulty,
           currentNumber: this.currentNumber,
           errors: this.errors,
-          combo: this.combo,
           elapsedTime: this.elapsedTime,
           timeLeft: this.timeLeft
         };
-        if (this.mode === 'bright') {
-          this.renderEngine.renderBrightMode(this.cells, gameState);
-        } else {
-          this.renderEngine.renderDarkMode(this.cells, gameState, this.mousePos);
-        }
+        // 始终使用明亮模式渲染
+        this.renderEngine.renderBrightMode(this.cells, gameState);
         this.animationFrameId = requestAnimationFrame(loop);
       } catch (error) {
         console.error('Render loop error:', error);
@@ -1515,18 +1389,28 @@ class GameManager {
     this.state = 'menu';
     this.stopGame();
     
+    // 完成当前关卡
+    const currentLevel = this.levelManager.currentLevel;
+    const stats = {
+      time: this.elapsedTime,
+      errors: this.errors
+    };
+    
+    this.levelManager.completeLevel(currentLevel, stats);
+    
     // 重置canvas缩放用于UI渲染
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     
-    const stats = {
-      completed: 100,
+    const resultStats = {
+      completed: this.levelManager.getCurrentLevelConfig().cellCount,
       time: this.elapsedTime,
       errors: this.errors,
-      maxCombo: this.maxCombo
+      level: currentLevel,
+      levelName: this.levelManager.getCurrentLevelConfig().name
     };
     
-    this.uiManager.render('result', stats);
-    console.log('Game stats:', stats);
+    this.uiManager.render('result', resultStats);
+    console.log('Game stats:', resultStats);
   }
 
   gameOver() {
@@ -1540,8 +1424,7 @@ class GameManager {
     const stats = {
       completed: this.currentNumber - 1,
       time: this.elapsedTime,
-      errors: this.errors,
-      maxCombo: this.maxCombo
+      errors: this.errors
     };
     
     this.uiManager.render('result', stats);

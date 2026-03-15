@@ -155,7 +155,7 @@ class VoronoiGenerator {
    * 随机分配数字到 Cell
    */
   assignNumbers(cells) {
-    // 创建 1-100 的数字数组
+    // 创建数字数组，范围是 1 到 numSites
     const numbers = Array.from({ length: this.numSites }, (_, i) => i + 1);
     
     // Fisher-Yates 洗牌算法
