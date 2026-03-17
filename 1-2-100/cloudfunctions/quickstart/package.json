@@ -10,5 +10,11 @@
   "description": "",
   "license": "ISC",
   "name": "dy-cloud-func-project",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "devDependencies": {
+    "jest": "^30.3.0"
+  },
+  "scripts": {
+    "test": "jest"
+  }
 }
