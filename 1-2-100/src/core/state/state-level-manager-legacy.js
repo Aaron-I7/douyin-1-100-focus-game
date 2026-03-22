@@ -5,9 +5,9 @@ class LevelManager {
       1: {
         id: 1,
         name: '第一关',
-        description: '热身练习：1-10',
-        cellCount: 10,
-        numberRange: { min: 1, max: 10 },
+        description: '热身练习：1-9',
+        cellCount: 9,
+        numberRange: { min: 1, max: 9 },
         unlocked: true,
         completed: false
       },

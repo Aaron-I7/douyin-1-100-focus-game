@@ -16,7 +16,17 @@
     "condition": {
         "game": {
             "current": -1,
-            "list": []
+            "list": [
+                {
+                    "id": 1773841489769,
+                    "name": "侧边栏",
+                    "query": "",
+                    "scene": "021036",
+                    "launchFrom": "game_room",
+                    "location": "game_list",
+                    "mockUpdateType": "Noupdate"
+                }
+            ]
         }
     }
 }

@@ -8,7 +8,12 @@ class TouchHandler {
     this.isEnabled = true;
     this.onCellClick = null;
     this.onMouseMove = null;
+    this.touchStartPos = { x: 0, y: 0 };
+    this.tapMaxDuration = 120;
+    this.moveCancelThreshold = 12;
+    this.touchMovedDistance = 0;
     this.setupEventListeners();
+    this.onCanvasClick = null;
   }
 
   setupEventListeners() {
@@ -17,19 +22,24 @@ class TouchHandler {
       const touch = event.touches[0];
       const pos = this.getTouchPosition(touch);
       this.lastTouchPos = pos;
+      this.touchStartPos = pos;
+      this.touchMovedDistance = 0;
       this.handleTouchStart(pos);
     });
 
     tt.onTouchMove((event) => {
       const touch = event.touches[0];
       const pos = this.getTouchPosition(touch);
+      const dx = pos.x - this.touchStartPos.x;
+      const dy = pos.y - this.touchStartPos.y;
+      this.touchMovedDistance = Math.sqrt(dx * dx + dy * dy);
       this.lastTouchPos = pos;
       this.handleTouchMove(pos);
     });
 
     tt.onTouchEnd((event) => {
       const touchDuration = Date.now() - this.touchStartTime;
-      if (touchDuration < 300) {
+      if (touchDuration <= this.tapMaxDuration && this.touchMovedDistance <= this.moveCancelThreshold) {
         this.handleTap(this.lastTouchPos);
       }
     });
@@ -60,6 +70,10 @@ class TouchHandler {
         const clickedCell = this.findCellAtPosition(pos);
         if (clickedCell && this.onCellClick) {
           this.onCellClick(clickedCell);
+          return;
+        }
+        if (!clickedCell && this.onCanvasClick) {
+          this.onCanvasClick(pos);
         }
       }
     } catch (error) {
@@ -98,15 +112,7 @@ class TouchHandler {
   }
 
   vibrate(type = 'light') {
-    try {
-      if (type === 'heavy') {
-        tt.vibrateShort({ type: 'heavy' });
-      } else {
-        tt.vibrateShort({ type: 'light' });
-      }
-    } catch (error) {
-      console.warn('Vibration not supported:', error);
-    }
+    return;
   }
 }
 

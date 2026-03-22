@@ -35,7 +35,7 @@ class UIManager {
     this.animationEngine = new AnimationEngine();
     
     // 触摸反馈设置
-    this.enableHapticFeedback = true;
+    this.enableHapticFeedback = false;
     this.enableClickAnimations = true;
     
     // 横屏提示控制
@@ -62,169 +62,252 @@ class UIManager {
     // 清空按钮数组
     this.buttons = [];
     
-    // 应用背景渐变
-    this.themeSystem.applyBackgroundGradient(ctx, w, h);
+    // 深色背景
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, w, h);
     
-    // 绘制装饰性元素
-    this.drawDecorativeElements(ctx);
+    // 顶部数据卡片
+    this.drawTopStatsCard(ctx);
     
-    // 渲染横屏提示（如果适用）
-    this.renderOrientationHint();
+    // ⭐ 侧边栏奖励入口（必接能力）
+    this.drawSidebarRewardEntry(ctx);
     
     // 游戏标题
     this.drawGameTitle(ctx);
     
-    // 检查自选模式解锁状态和用户进度
-    const isCustomModeUnlocked = this.userProfileManager ? 
-      this.userProfileManager.isCustomModeUnlocked() : false;
+    // 开始游戏按钮
+    this.drawStartGameButton(ctx);
     
-    const hasProgress = this.userProfileManager ? 
-      (this.userProfileManager.isLevelCompleted(1) || this.userProfileManager.isLevelCompleted(2)) : false;
-    
-    // 主要按钮
-    this.drawMainMenuButtons(ctx, isCustomModeUnlocked, hasProgress);
-    
-    // 说明文字
-    this.drawInstructionText(ctx, isCustomModeUnlocked);
+    // 通关省份排行榜
+    this.drawProvinceLeaderboard(ctx);
   }
 
   /**
-   * 绘制霓虹赛博朋克游戏标题
+   * 绘制顶部数据卡片
+   */
+  drawTopStatsCard(ctx) {
+    const w = this.width;
+    const h = this.height;
+    
+    // 卡片位置和尺寸
+    const cardWidth = w * 0.35;
+    const cardHeight = 70;
+    const cardX = w - cardWidth - 20;
+    const cardY = 20;
+    
+    // 半透明背景（毛玻璃效果）
+    ctx.save();
+    ctx.fillStyle = 'rgba(40, 40, 40, 0.8)';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+    ctx.shadowBlur = 10;
+    this.roundRect(ctx, cardX, cardY, cardWidth, cardHeight, 12);
+    ctx.fill();
+    ctx.restore();
+    
+    // 挑战人数
+    ctx.fillStyle = '#999';
+    ctx.font = `${Math.floor(w * 0.03)}px "PingFang SC", sans-serif`;
+    ctx.textAlign = 'left';
+    ctx.fillText('👥 挑战人数', cardX + 15, cardY + 20);
+    
+    ctx.fillStyle = '#FFD700';
+    ctx.font = `bold ${Math.floor(w * 0.045)}px "PingFang SC", sans-serif`;
+    ctx.textAlign = 'right';
+    ctx.fillText('12,543', cardX + cardWidth - 15, cardY + 20);
+    
+    // 今日通过
+    ctx.fillStyle = '#999';
+    ctx.font = `${Math.floor(w * 0.03)}px "PingFang SC", sans-serif`;
+    ctx.textAlign = 'left';
+    ctx.fillText('🏆 今日通过', cardX + 15, cardY + 50);
+    
+    ctx.fillStyle = '#FFD700';
+    ctx.font = `bold ${Math.floor(w * 0.045)}px "PingFang SC", sans-serif`;
+    ctx.textAlign = 'right';
+    ctx.fillText('842', cardX + cardWidth - 15, cardY + 50);
+  }
+
+  /**
+   * 绘制游戏标题
    */
   drawGameTitle(ctx) {
     const w = this.width;
     const h = this.height;
-    const theme = this.themeSystem.getThemeColors();
     
-    // 主标题 - 霓虹蓝发光效果
+    // 主标题 - 金色渐变
     ctx.save();
+    const gradient = ctx.createLinearGradient(w / 2 - 100, h * 0.25, w / 2 + 100, h * 0.25);
+    gradient.addColorStop(0, '#FFD700');
+    gradient.addColorStop(0.5, '#FFA500');
+    gradient.addColorStop(1, '#FFD700');
     
-    // 多层发光效果
-    const glowLayers = [
-      { blur: 30, alpha: 0.8, color: theme.primary },
-      { blur: 15, alpha: 0.6, color: theme.primaryLight },
-      { blur: 5, alpha: 1.0, color: '#FFFFFF' }
-    ];
-    
-    glowLayers.forEach((layer, index) => {
-      ctx.shadowColor = layer.color;
-      ctx.shadowBlur = layer.blur;
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 0;
-      ctx.globalAlpha = layer.alpha;
-      
-      ctx.fillStyle = layer.color;
-      ctx.font = `bold ${Math.floor(w * 0.12)}px "Courier New", monospace`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('1-100', w / 2, h * 0.25);
-    });
-    
-    ctx.restore();
-    
-    // 副标题 - 激光绿发光
-    ctx.save();
-    ctx.shadowColor = theme.secondary;
-    ctx.shadowBlur = 15;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-    
-    ctx.fillStyle = theme.secondary;
-    ctx.font = `bold ${Math.floor(w * 0.045)}px "Courier New", monospace`;
+    ctx.fillStyle = gradient;
+    ctx.font = `bold ${Math.floor(w * 0.18)}px "Arial", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('专注力挑战', w / 2, h * 0.35);
+    ctx.fillText('1-100', w / 2, h * 0.25);
     ctx.restore();
     
-    // 添加脉冲效果到标题
-    const pulseIntensity = this.themeSystem.getPulseIntensity(Date.now(), 1);
-    if (pulseIntensity > 0.7) {
-      ctx.save();
-      ctx.globalAlpha = (pulseIntensity - 0.7) * 0.5;
-      ctx.shadowColor = theme.accent;
-      ctx.shadowBlur = 40;
-      ctx.fillStyle = theme.accent;
-      ctx.font = `bold ${Math.floor(w * 0.12)}px "Courier New", monospace`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('1-100', w / 2, h * 0.25);
-      ctx.restore();
-    }
-  }
-
-  /**
-   * 绘制主菜单按钮
-   */
-  drawMainMenuButtons(ctx, isCustomModeUnlocked, hasProgress = false) {
-    const w = this.width;
-    const h = this.height;
-    
-    // 开始游戏/继续游戏按钮
-    this.drawThemedButton(ctx, {
-      x: w * 0.2,
-      y: h * 0.5,
-      width: w * 0.6,
-      height: 60,
-      text: hasProgress ? '继续游戏' : '开始游戏',
-      type: 'primary',
-      id: 'start'
-    });
-    
-    // 自选模式按钮
-    if (isCustomModeUnlocked) {
-      this.drawThemedButton(ctx, {
-        x: w * 0.2,
-        y: h * 0.58,
-        width: w * 0.6,
-        height: 50,
-        text: '自选模式',
-        type: 'secondary',
-        id: 'customMode'
-      });
-    } else {
-      this.drawLockedButton(ctx, {
-        x: w * 0.2,
-        y: h * 0.58,
-        width: w * 0.6,
-        height: 50,
-        text: '自选模式',
-        id: 'customModeLocked'
-      });
-    }
-    
-    // 我的成绩按钮
-    this.drawThemedButton(ctx, {
-      x: w * 0.2,
-      y: h * 0.66,
-      width: w * 0.6,
-      height: 45,
-      text: '我的成绩',
-      type: 'accent',
-      id: 'scores'
-    });
-  }
-
-  /**
-   * 绘制说明文字
-   */
-  drawInstructionText(ctx, isCustomModeUnlocked) {
-    const w = this.width;
-    const h = this.height;
-    const theme = this.themeSystem.getThemeColors();
-    
-    // 游戏说明
-    ctx.fillStyle = theme.hud.textSecondary;
+    // 副标题
+    ctx.fillStyle = '#999';
     ctx.font = `${Math.floor(w * 0.035)}px "PingFang SC", sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('按顺序点击 1-100 的数字', w / 2, h * 0.75);
-    ctx.fillText('挑战你的专注力极限！', w / 2, h * 0.8);
+    ctx.fillText('舒尔特方格 - 极限注意力挑战', w / 2, h * 0.32);
+  }
+
+  /**
+   * 绘制开始游戏按钮
+   */
+  drawStartGameButton(ctx) {
+    const w = this.width;
+    const h = this.height;
     
-    // 解锁提示文字
-    if (!isCustomModeUnlocked) {
-      ctx.fillStyle = theme.accent;
-      ctx.font = `${Math.floor(w * 0.03)}px "PingFang SC", sans-serif`;
-      ctx.fillText('完成第二关解锁自选模式', w / 2, h * 0.85);
-    }
+    const buttonWidth = w * 0.8;
+    const buttonHeight = 70;
+    const buttonX = (w - buttonWidth) / 2;
+    const buttonY = h * 0.38;
+    
+    // 渐变背景（橙色到粉色）
+    ctx.save();
+    const gradient = ctx.createLinearGradient(buttonX, buttonY, buttonX + buttonWidth, buttonY);
+    gradient.addColorStop(0, '#FF9966');
+    gradient.addColorStop(1, '#FF6699');
+    
+    ctx.fillStyle = gradient;
+    ctx.shadowColor = 'rgba(255, 102, 153, 0.5)';
+    ctx.shadowBlur = 20;
+    this.roundRect(ctx, buttonX, buttonY, buttonWidth, buttonHeight, 35);
+    ctx.fill();
+    ctx.restore();
+    
+    // 游戏手柄图标
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = `${Math.floor(w * 0.06)}px Arial, sans-serif`;
+    ctx.textAlign = 'left';
+    ctx.fillText('🎮', buttonX + 20, buttonY + buttonHeight / 2 + 5);
+    
+    // 按钮文字
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = `bold ${Math.floor(w * 0.05)}px "PingFang SC", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText('开始游戏', w / 2, buttonY + buttonHeight / 2 - 5);
+    
+    // 剩余次数
+    ctx.font = `${Math.floor(w * 0.032)}px "PingFang SC", sans-serif`;
+    ctx.fillText('今日剩余免费次数: 3', w / 2, buttonY + buttonHeight / 2 + 18);
+    
+    // 保存按钮信息
+    this.buttons.push({
+      id: 'start',
+      x: buttonX,
+      y: buttonY,
+      width: buttonWidth,
+      height: buttonHeight
+    });
+  }
+
+  /**
+   * 绘制通关省份排行榜
+   */
+  drawProvinceLeaderboard(ctx) {
+    const w = this.width;
+    const h = this.height;
+    
+    // 标题
+    ctx.fillStyle = '#FFD700';
+    ctx.font = `bold ${Math.floor(w * 0.045)}px "PingFang SC", sans-serif`;
+    ctx.textAlign = 'left';
+    ctx.fillText('👑 通关省份排行榜', w * 0.1, h * 0.52);
+    
+    // 排行榜数据
+    const leaderboardData = [
+      { rank: 1, province: '广东省', count: 1203, avatars: ['👤', '👤', '👤', '👤', '👤'] },
+      { rank: 2, province: '北京市', count: 982, avatars: ['👤', '👤', '👤', '👤'] },
+      { rank: 3, province: '上海市', count: 856, avatars: ['👤', '👤', '👤', '👤'] }
+    ];
+    
+    let yOffset = h * 0.56;
+    const itemHeight = 60;
+    const itemSpacing = 10;
+    
+    leaderboardData.forEach((item) => {
+      this.drawLeaderboardItem(ctx, {
+        x: w * 0.1,
+        y: yOffset,
+        width: w * 0.8,
+        height: itemHeight,
+        ...item
+      });
+      yOffset += itemHeight + itemSpacing;
+    });
+  }
+
+  /**
+   * 绘制排行榜单项
+   */
+  drawLeaderboardItem(ctx, config) {
+    const { x, y, width, height, rank, province, count, avatars } = config;
+    
+    // 深色卡片背景
+    ctx.save();
+    ctx.fillStyle = 'rgba(40, 40, 40, 0.9)';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+    ctx.shadowBlur = 8;
+    this.roundRect(ctx, x, y, width, height, 12);
+    ctx.fill();
+    ctx.restore();
+    
+    // 排名徽章
+    const badgeSize = 35;
+    const badgeX = x + 15;
+    const badgeY = y + height / 2 - badgeSize / 2;
+    
+    // 徽章背景颜色
+    const badgeColors = ['#FFD700', '#C0C0C0', '#CD7F32'];
+    ctx.fillStyle = badgeColors[rank - 1] || '#666';
+    ctx.beginPath();
+    ctx.arc(badgeX + badgeSize / 2, badgeY + badgeSize / 2, badgeSize / 2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // 排名数字
+    ctx.fillStyle = '#000';
+    ctx.font = `bold ${Math.floor(badgeSize * 0.6)}px "Arial", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(rank, badgeX + badgeSize / 2, badgeY + badgeSize / 2);
+    
+    // 省份名称
+    ctx.fillStyle = '#FFF';
+    ctx.font = `bold ${Math.floor(width * 0.045)}px "PingFang SC", sans-serif`;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(province, badgeX + badgeSize + 15, y + height / 2);
+    
+    // 头像组（重叠显示）
+    const avatarSize = 28;
+    const avatarOverlap = 8;
+    let avatarX = x + width * 0.45;
+    
+    avatars.forEach((avatar, index) => {
+      // 头像圆形背景
+      ctx.fillStyle = `hsl(${index * 60}, 70%, 60%)`;
+      ctx.beginPath();
+      ctx.arc(avatarX, y + height / 2, avatarSize / 2, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // 头像边框
+      ctx.strokeStyle = '#1a1a1a';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      avatarX += avatarSize - avatarOverlap;
+    });
+    
+    // 通关人数
+    ctx.fillStyle = '#999';
+    ctx.font = `${Math.floor(width * 0.04)}px "PingFang SC", sans-serif`;
+    ctx.textAlign = 'right';
+    ctx.fillText(`${count}人`, x + width - 15, y + height / 2);
   }
 
   /**
@@ -876,11 +959,6 @@ class UIManager {
       this.pressedButton = button;
       this.buttonPressTime = Date.now();
       
-      // 触觉反馈
-      if (this.enableHapticFeedback && typeof tt !== 'undefined' && tt.vibrateShort) {
-        tt.vibrateShort();
-      }
-      
       // 按钮按下动画
       if (this.enableClickAnimations) {
         this.animationEngine.addBounceEffect(
@@ -942,6 +1020,17 @@ class UIManager {
   }
 
   handleClick(x, y) {
+    // 优先检查对话框按钮
+    if (this.dialogButtons && this.dialogButtons.length > 0) {
+      for (const button of this.dialogButtons) {
+        if (x >= button.x && x <= button.x + button.width &&
+            y >= button.y && y <= button.y + button.height) {
+          return button;
+        }
+      }
+    }
+    
+    // 检查普通按钮
     for (const button of this.buttons) {
       if (x >= button.x && x <= button.x + button.width &&
           y >= button.y && y <= button.y + button.height) {
@@ -1206,6 +1295,298 @@ class UIManager {
     
     // 更新和渲染动画
     this.updateAnimations();
+  }
+  
+  /**
+   * 绘制侧边栏奖励入口（必接能力）
+   */
+  drawSidebarRewardEntry(ctx) {
+    // 获取侧边栏奖励系统
+    const sidebarSystem = typeof window !== 'undefined' && window.getSidebarRewardSystem ? 
+      window.getSidebarRewardSystem() : 
+      (typeof require !== 'undefined' ? require('./services-sidebar-reward-system').getSidebarRewardSystem() : null);
+    
+    if (!sidebarSystem) {
+      return;
+    }
+    
+    // 检查是否应该显示
+    if (!sidebarSystem.shouldShowRewardEntry()) {
+      return;
+    }
+    
+    const w = this.width;
+    
+    // 礼包图标位置（左上角，顶部数据卡片下方）
+    const iconSize = 60;
+    const iconX = 20;
+    const iconY = 100;
+    
+    // 绘制礼包背景（带动画效果）
+    ctx.save();
+    
+    // 脉冲动画效果
+    const time = Date.now();
+    const pulse = Math.sin(time / 500) * 0.1 + 1;
+    
+    ctx.translate(iconX + iconSize / 2, iconY + iconSize / 2);
+    ctx.scale(pulse, pulse);
+    ctx.translate(-(iconX + iconSize / 2), -(iconY + iconSize / 2));
+    
+    // 渐变背景
+    const gradient = ctx.createLinearGradient(iconX, iconY, iconX + iconSize, iconY + iconSize);
+    gradient.addColorStop(0, '#FFD700');
+    gradient.addColorStop(1, '#FFA500');
+    
+    ctx.fillStyle = gradient;
+    ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
+    ctx.shadowBlur = 15;
+    this.roundRect(ctx, iconX, iconY, iconSize, iconSize, 12);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    
+    // 礼包图标（使用 emoji）
+    ctx.font = `${iconSize * 0.5}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText('🎁', iconX + iconSize / 2, iconY + iconSize / 2);
+    
+    // "NEW" 标签
+    const badgeSize = 20;
+    const badgeX = iconX + iconSize - badgeSize / 2;
+    const badgeY = iconY - badgeSize / 2;
+    
+    ctx.fillStyle = '#FF4444';
+    ctx.beginPath();
+    ctx.arc(badgeX, badgeY, badgeSize / 2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.font = 'bold 10px Arial';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText('NEW', badgeX, badgeY);
+    
+    ctx.restore();
+    
+    // 文字说明
+    ctx.save();
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 14px "PingFang SC"';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText('限定福利', iconX + iconSize + 10, iconY + 10);
+    
+    ctx.fillStyle = '#AAAAAA';
+    ctx.font = '12px "PingFang SC"';
+    ctx.fillText('每日可领', iconX + iconSize + 10, iconY + 32);
+    ctx.restore();
+    
+    // 添加到按钮数组（用于点击检测）
+    this.buttons.push({
+      type: 'sidebar_reward',
+      x: iconX,
+      y: iconY,
+      width: iconSize + 100,
+      height: iconSize,
+      action: () => this.showSidebarRewardDialog()
+    });
+  }
+  
+  /**
+   * 显示侧边栏奖励对话框
+   */
+  showSidebarRewardDialog() {
+    const sidebarSystem = typeof window !== 'undefined' && window.getSidebarRewardSystem ? 
+      window.getSidebarRewardSystem() : 
+      (typeof require !== 'undefined' ? require('./services-sidebar-reward-system').getSidebarRewardSystem() : null);
+    
+    if (!sidebarSystem) {
+      return;
+    }
+    
+    const ctx = this.ctx;
+    const w = this.width;
+    const h = this.height;
+    
+    // 半透明遮罩
+    ctx.save();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillRect(0, 0, w, h);
+    
+    // 对话框
+    const dialogWidth = w * 0.85;
+    const dialogHeight = h * 0.6;
+    const dialogX = (w - dialogWidth) / 2;
+    const dialogY = (h - dialogHeight) / 2;
+    
+    // 对话框背景
+    ctx.fillStyle = '#FFFFFF';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+    ctx.shadowBlur = 20;
+    this.roundRect(ctx, dialogX, dialogY, dialogWidth, dialogHeight, 20);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    
+    // 获取引导文案
+    const guidance = sidebarSystem.getGuidanceText();
+    const status = sidebarSystem.getRewardStatus();
+    
+    // 标题
+    ctx.fillStyle = '#FFD700';
+    ctx.font = 'bold 20px "PingFang SC"';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(guidance.dialogTitle, w / 2, dialogY + 25);
+    
+    // 奖励内容
+    ctx.fillStyle = '#333333';
+    ctx.font = 'bold 16px "PingFang SC"';
+    ctx.fillText('🎁 奖励内容', w / 2, dialogY + 65);
+    
+    ctx.font = '14px "PingFang SC"';
+    guidance.rewardItems.forEach((item, index) => {
+      ctx.fillText(item, w / 2, dialogY + 95 + index * 25);
+    });
+    
+    // 操作步骤
+    ctx.font = 'bold 14px "PingFang SC"';
+    ctx.fillText('📋 领取步骤', w / 2, dialogY + 160);
+    
+    ctx.font = '12px "PingFang SC"';
+    ctx.textAlign = 'left';
+    guidance.steps.forEach((step, index) => {
+      ctx.fillText(step, dialogX + 30, dialogY + 190 + index * 25);
+    });
+    
+    // 按钮
+    const buttonWidth = dialogWidth * 0.7;
+    const buttonHeight = 50;
+    const buttonX = (w - buttonWidth) / 2;
+    const buttonY = dialogY + dialogHeight - 80;
+    
+    // 判断按钮状态
+    const canClaim = status.canClaim;
+    const buttonText = canClaim ? guidance.buttonCompleted : guidance.buttonNotCompleted;
+    const buttonColor = canClaim ? '#4CAF50' : '#FFD700';
+    
+    // 绘制按钮
+    const gradient = ctx.createLinearGradient(buttonX, buttonY, buttonX, buttonY + buttonHeight);
+    gradient.addColorStop(0, buttonColor);
+    gradient.addColorStop(1, canClaim ? '#45a049' : '#FFA500');
+    
+    ctx.fillStyle = gradient;
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+    ctx.shadowBlur = 10;
+    this.roundRect(ctx, buttonX, buttonY, buttonWidth, buttonHeight, 25);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 18px "PingFang SC"';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(buttonText, w / 2, buttonY + buttonHeight / 2);
+    
+    // 关闭按钮
+    const closeSize = 30;
+    const closeX = dialogX + dialogWidth - closeSize - 10;
+    const closeY = dialogY + 10;
+    
+    ctx.fillStyle = '#CCCCCC';
+    ctx.beginPath();
+    ctx.arc(closeX + closeSize / 2, closeY + closeSize / 2, closeSize / 2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(closeX + 10, closeY + 10);
+    ctx.lineTo(closeX + closeSize - 10, closeY + closeSize - 10);
+    ctx.moveTo(closeX + closeSize - 10, closeY + 10);
+    ctx.lineTo(closeX + 10, closeY + closeSize - 10);
+    ctx.stroke();
+    
+    ctx.restore();
+    
+    // 临时按钮数组（用于对话框内的点击）
+    this.dialogButtons = [
+      {
+        type: 'sidebar_action',
+        x: buttonX,
+        y: buttonY,
+        width: buttonWidth,
+        height: buttonHeight,
+        action: () => {
+          if (canClaim) {
+            this.handleSidebarRewardClaim();
+          } else {
+            this.handleNavigateToSidebar();
+          }
+        }
+      },
+      {
+        type: 'close_dialog',
+        x: closeX,
+        y: closeY,
+        width: closeSize,
+        height: closeSize,
+        action: () => {
+          this.dialogButtons = null;
+          this.render(this.currentScreen);
+        }
+      }
+    ];
+  }
+  
+  /**
+   * 处理跳转到侧边栏
+   */
+  async handleNavigateToSidebar() {
+    const sidebarSystem = typeof window !== 'undefined' && window.getSidebarRewardSystem ? 
+      window.getSidebarRewardSystem() : 
+      (typeof require !== 'undefined' ? require('./services-sidebar-reward-system').getSidebarRewardSystem() : null);
+    
+    if (!sidebarSystem) {
+      return;
+    }
+    
+    const success = await sidebarSystem.navigateToSidebar();
+    
+    if (success) {
+      console.log('[UI] 已跳转到侧边栏');
+    }
+  }
+  
+  /**
+   * 处理领取侧边栏奖励
+   */
+  handleSidebarRewardClaim() {
+    const sidebarSystem = typeof window !== 'undefined' && window.getSidebarRewardSystem ? 
+      window.getSidebarRewardSystem() : 
+      (typeof require !== 'undefined' ? require('./services-sidebar-reward-system').getSidebarRewardSystem() : null);
+    
+    if (!sidebarSystem) {
+      return;
+    }
+    
+    const reward = sidebarSystem.claimReward();
+    
+    if (reward) {
+      // 显示奖励领取成功
+      if (typeof tt !== 'undefined' && tt.showToast) {
+        tt.showToast({
+          title: '奖励领取成功！',
+          icon: 'success',
+          duration: 2000
+        });
+      }
+      
+      // 关闭对话框
+      this.dialogButtons = null;
+      this.render(this.currentScreen);
+      
+      console.log('[UI] 侧边栏奖励已领取:', reward);
+    }
   }
 }
 

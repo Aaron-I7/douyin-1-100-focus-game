@@ -319,7 +319,7 @@ class ErrorHandlingIntegration {
       canvas: CanvasErrorHandler.checkCanvasSupport() ? 'ok' : 'error',
       network: stats.cloud.isOnline ? 'ok' : 'offline',
       errors: {
-        critical: stats.logger.severityCount?.critical || 0,
+        critical: (stats.logger.severityCount && stats.logger.severityCount.critical) || 0,
         recent: stats.logger.recentLogs,
         frequent: this.touchErrorHandler.hasFrequentErrors()
       },
@@ -343,7 +343,7 @@ class ErrorHandlingIntegration {
       recommendations.push('等待网络恢复以同步数据');
     }
     
-    if (stats.logger.severityCount?.critical > 0) {
+    if (stats.logger.severityCount && stats.logger.severityCount.critical > 0) {
       recommendations.push('存在严重错误，建议重启游戏');
     }
     

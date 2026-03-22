@@ -370,24 +370,7 @@ class OptimizedTouchHandler {
    * 优化的震动反馈
    */
   vibrate(type = 'light') {
-    try {
-      // 使用requestIdleCallback优化震动调用（如果支持）
-      const doVibrate = () => {
-        if (type === 'heavy') {
-          tt.vibrateShort({ type: 'heavy' });
-        } else {
-          tt.vibrateShort({ type: 'light' });
-        }
-      };
-      
-      if (typeof requestIdleCallback !== 'undefined') {
-        requestIdleCallback(doVibrate, { timeout: 50 });
-      } else {
-        doVibrate();
-      }
-    } catch (error) {
-      console.warn('Vibration not supported:', error);
-    }
+    return;
   }
   
   /**

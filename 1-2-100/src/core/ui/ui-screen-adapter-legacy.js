@@ -8,6 +8,8 @@ class ScreenAdapter {
     this.orientation = 'portrait';
     this.gameAreaWidth = 0;
     this.gameAreaHeight = 0;
+    this.gameAreaX = 0;
+    this.gameAreaY = 80;
     this.fontSize = 0;
     this.buttonHeight = 0;
     this.padding = 0;
@@ -42,10 +44,22 @@ class ScreenAdapter {
 
   calculateDimensions() {
     const orientation = this.getOrientation();
-    const topMargin = 80;
-    const bottomMargin = 60;
-    this.gameAreaWidth = this.screenWidth;
-    this.gameAreaHeight = this.screenHeight - topMargin - bottomMargin;
+    const safeTop = this.safeArea && typeof this.safeArea.top === 'number' ? this.safeArea.top : 0;
+    const safeBottom = this.safeArea && typeof this.safeArea.bottom === 'number' ? this.safeArea.bottom : this.screenHeight;
+    const safeLeft = this.safeArea && typeof this.safeArea.left === 'number' ? this.safeArea.left : 0;
+    const safeRight = this.safeArea && typeof this.safeArea.right === 'number' ? this.safeArea.right : this.screenWidth;
+    
+    // HUD takes roughly 240px from safeTop. Give it a bit more margin.
+    const topMargin = Math.max(260, safeTop + 240);
+    
+    // Bottom actions and nav take roughly 160px from bottom
+    const bottomSafeInset = Math.max(0, this.screenHeight - safeBottom);
+    const bottomMargin = Math.max(160, bottomSafeInset + 160);
+    
+    this.gameAreaWidth = Math.max(0, safeRight - safeLeft - 32); // add side padding
+    this.gameAreaHeight = Math.max(0, this.screenHeight - topMargin - bottomMargin);
+    this.gameAreaX = safeLeft + 16;
+    this.gameAreaY = topMargin;
     if (orientation === 'landscape') {
       this.fontSize = Math.max(12, Math.floor(this.screenWidth * 0.04 * 0.9));
       this.buttonHeight = Math.max(44, Math.floor(this.screenHeight * 0.08));
@@ -59,7 +73,7 @@ class ScreenAdapter {
   }
 
   getGameBounds() {
-    return { x: 0, y: 80, width: this.gameAreaWidth, height: this.gameAreaHeight };
+    return { x: this.gameAreaX || 0, y: this.gameAreaY || 80, width: this.gameAreaWidth, height: this.gameAreaHeight };
   }
 
   isPortrait() {

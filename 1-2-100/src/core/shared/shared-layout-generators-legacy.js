@@ -1,3 +1,5 @@
+const { computeVoronoi } = require('../../utils/voronoi');
+
 class Point {
   constructor(x, y) {
     this.x = x;
@@ -189,9 +191,14 @@ class VoronoiGenerator {
   generate() {
     console.log('Generating Voronoi diagram...');
     const startTime = Date.now();
-    this.sites = this.generateSites();
-    console.log(`Generated ${this.sites.length} sites`);
-    this.cells = this.generateVoronoiCells();
+    const polygons = computeVoronoi(this.numSites, this.width, this.height, 2);
+    this.cells = polygons.map((item, index) => {
+      const site = new Point(item.cx, item.cy);
+      const cell = new Cell(site, index + 1);
+      cell.polygon = item.poly.map((p) => new Point(p[0], p[1]));
+      return cell;
+    });
+    this.sites = this.cells.map((cell) => cell.site.clone());
     console.log(`Generated ${this.cells.length} cells`);
     this.assignNumbers(this.cells);
     const valid = this.validateCells(this.cells);
@@ -222,10 +229,8 @@ class GridLayoutGenerator {
     for (let i = 0; i < this.numCells; i++) {
       const row = Math.floor(i / gridSize);
       const col = i % gridSize;
-      const offsetX = (Math.random() - 0.5) * cellWidth * 0.3;
-      const offsetY = (Math.random() - 0.5) * cellHeight * 0.3;
-      const centerX = (col + 0.5) * cellWidth + offsetX;
-      const centerY = (row + 0.5) * cellHeight + offsetY;
+      const centerX = (col + 0.5) * cellWidth;
+      const centerY = (row + 0.5) * cellHeight;
       const site = new Point(centerX, centerY);
       const cell = new Cell(site, numbers[i]);
       const x1 = col * cellWidth;

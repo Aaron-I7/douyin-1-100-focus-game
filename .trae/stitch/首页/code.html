@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>舒尔特方格 - 专注力训练</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed": "#cbe8e6",
+              "surface-container-highest": "#dde4e1",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-fixed": "#294443",
+              "primary": "#426564",
+              "error-container": "#fa746f",
+              "background": "#f8faf8",
+              "on-background": "#2d3432",
+              "on-tertiary": "#fff7f3",
+              "surface-bright": "#f8faf8",
+              "tertiary-container": "#fde7d3",
+              "on-tertiary-container": "#635445",
+              "outline": "#757c7a",
+              "on-secondary": "#e1fffd",
+              "on-tertiary-fixed": "#504234",
+              "secondary": "#496463",
+              "on-primary-fixed-variant": "#3e6261",
+              "primary-container": "#c4eae8",
+              "inverse-on-surface": "#9b9d9c",
+              "on-surface": "#2d3432",
+              "surface-container": "#eaefec",
+              "tertiary-fixed": "#fde7d3",
+              "primary-fixed": "#c4eae8",
+              "on-tertiary-fixed-variant": "#6d5e4f",
+              "error": "#a83836",
+              "inverse-surface": "#0b0f0e",
+              "surface-container-low": "#f1f4f2",
+              "primary-fixed-dim": "#b6dcda",
+              "on-secondary-fixed-variant": "#45605f",
+              "on-error": "#fff7f6",
+              "on-error-container": "#6e0a12",
+              "surface-dim": "#d4dcd9",
+              "secondary-container": "#cbe8e6",
+              "on-surface-variant": "#59615f",
+              "tertiary-dim": "#5f5142",
+              "on-primary": "#e0fffe",
+              "error-dim": "#67040d",
+              "tertiary": "#6c5c4d",
+              "surface-container-high": "#e4e9e7",
+              "on-primary-container": "#345857",
+              "surface-tint": "#426564",
+              "on-primary-fixed": "#214544",
+              "surface-variant": "#dde4e1",
+              "on-secondary-container": "#3c5755",
+              "surface": "#f8faf8",
+              "inverse-primary": "#d7fefc",
+              "secondary-dim": "#3d5857",
+              "outline-variant": "#acb3b1",
+              "tertiary-fixed-dim": "#eed9c6",
+              "secondary-fixed-dim": "#bddad8",
+              "primary-dim": "#365958"
+            },
+            fontFamily: {
+              "headline": ["Manrope", "sans-serif"],
+              "body": ["Manrope", "sans-serif"],
+              "label": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .neomorphic-card {
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.05), -8px -8px 16px rgba(255, 255, 255, 0.8);
+        }
+        .neomorphic-inset {
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.05), inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #426564 0%, #c4eae8 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-background min-h-screen flex flex-col overflow-x-hidden">
+<!-- TopAppBar -->
+<nav class="bg-surface fixed top-0 left-0 right-0 z-50">
+<div class="flex justify-between items-center w-full max-w-2xl mx-auto docked full-width px-4 pt-2 h-16 shadow-[4px_4px_10px_rgba(0,0,0,0.05),-4px_-4px_10px_rgba(255,255,255,0.8)]">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-all scale-95 active:duration-150 cubic-bezier(0.34,1.56,0.64,1)">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+<h1 class="font-manrope text-headline-md font-medium tracking-tight font-semibold text-primary tracking-wide">舒尔特方格</h1>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-all scale-95 active:duration-150 cubic-bezier(0.34,1.56,0.64,1)">
+<span class="material-symbols-outlined text-primary">settings</span>
+</button>
+</div>
+</nav>
+<main class="flex-grow pt-24 pb-32 px-6 max-w-2xl mx-auto w-full">
+<!-- Hero Section -->
+<header class="mt-8 mb-12">
+<div class="inline-block bg-primary-container px-3 py-1 rounded-full mb-4">
+<span class="text-on-primary-container text-label-md font-medium tracking-widest uppercase">Mindful Monolith</span>
+</div>
+<h2 class="text-on-background font-headline font-extrabold text-5xl leading-tight tracking-tighter mb-2">舒尔特方格</h2>
+<p class="text-on-surface-variant text-title-lg opacity-80">专注力与反应力训练</p>
+</header>
+<!-- Bento Grid Entry Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+<!-- Level 1 Card -->
+<div class="group relative bg-surface-container-low rounded-3xl p-8 neomorphic-card border border-white/20 overflow-hidden transition-all duration-300 hover:translate-y-[-4px]">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-8xl" style="font-variation-settings: 'FILL' 1;">filter_1</span>
+</div>
+<div class="relative z-10">
+<span class="text-primary font-bold text-sm tracking-widest uppercase mb-2 block">Level 01</span>
+<h3 class="text-on-surface text-headline-md font-bold mb-4">第一关：基础入门</h3>
+<div class="flex items-center gap-2 mb-6">
+<span class="bg-surface-container-highest px-3 py-1 rounded-lg text-label-md font-medium">Range: 1-10</span>
+<span class="bg-secondary-container px-3 py-1 rounded-lg text-label-md font-medium text-on-secondary-container">Beginner</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="w-3/4 h-full bg-primary rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Level 2 Card -->
+<div class="group relative bg-surface-container-low rounded-3xl p-8 neomorphic-card border border-white/20 overflow-hidden transition-all duration-300 hover:translate-y-[-4px]">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-8xl" style="font-variation-settings: 'FILL' 1;">filter_2</span>
+</div>
+<div class="relative z-10">
+<span class="text-primary font-bold text-sm tracking-widest uppercase mb-2 block">Level 02</span>
+<h3 class="text-on-surface text-headline-md font-bold mb-4">第二关：世纪挑战</h3>
+<div class="flex items-center gap-2 mb-6">
+<span class="bg-surface-container-highest px-3 py-1 rounded-lg text-label-md font-medium">Range: 1-100</span>
+<span class="bg-tertiary-container px-3 py-1 rounded-lg text-label-md font-medium text-on-tertiary-container">Expert</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="w-1/4 h-full bg-tertiary rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Featured Training Visual -->
+<section class="mb-12">
+<div class="relative w-full h-48 rounded-3xl bg-surface-container-high flex items-center justify-center neomorphic-inset overflow-hidden">
+<div class="absolute inset-0 opacity-20">
+<img alt="Abstract pattern" class="w-full h-full object-cover" data-alt="Abstract geometric minimal patterns with soft gradients" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAL1Qhctp3jLtGwLk2WGkg4kMKr8HhClwOnxF2EeU7yZ5M1HNxMTXuTKOr2AQzc8GrJDPaz9pofWY5TPxdCJLDaAxGO56waHAmzVWk9VVNI-rt3swr8LgyLHWwH3BF5NpRCyPhta7j_6WG16F89acccCwIntl1PgSHCPGWQScTpDxmXgOPeOQQKnxOULAxPgQwmRF6gJwYTUNRCncaILIADr-1HDQT1s3AG_qrUrLqNoyN1H5_Isu_Ky1vzs5BQ1Unr-V8biAzeR09w"/>
+</div>
+<div class="relative z-10 text-center px-6">
+<span class="material-symbols-outlined text-primary text-4xl mb-2">psychology</span>
+<h4 class="text-on-surface font-semibold">每日专注力指数</h4>
+<p class="text-on-surface-variant text-sm">今日已训练 15 分钟，继续保持</p>
+</div>
+</div>
+</section>
+<!-- CTA Action -->
+<div class="fixed bottom-32 left-0 right-0 flex justify-center px-6 z-40">
+<button class="hero-gradient text-on-primary w-full max-w-sm py-5 rounded-full text-title-md font-bold shadow-xl shadow-primary/20 flex items-center justify-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95">
+<span class="material-symbols-outlined">play_arrow</span>
+                开始游戏
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+<div class="bg-surface-container-low/70 backdrop-blur-xl floating pill mx-8 mb-8 rounded-[2rem] py-3 shadow-[8px_8px_16px_rgba(0,0,0,0.08),-8px_-8px_16px_rgba(255,255,255,0.9)] flex justify-around items-center w-auto">
+<!-- Active: 首页 -->
+<a class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-2xl px-5 py-2 scale-105 shadow-inner transition-transform duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-manrope text-label-md font-medium tracking-widest uppercase mt-1">首页</span>
+</a>
+<!-- Inactive: 挑战 -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 px-5 py-2 hover:scale-110 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-manrope text-label-md font-medium tracking-widest uppercase mt-1">挑战</span>
+</a>
+<!-- Inactive: 成就 -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 px-5 py-2 hover:scale-110 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="emoji_events">emoji_events</span>
+<span class="font-manrope text-label-md font-medium tracking-widest uppercase mt-1">成就</span>
+</a>
+</div>
+</nav>
+<!-- Web Navigation (md:flex) -->
+<div class="hidden md:flex fixed right-8 top-1/2 -translate-y-1/2 flex-col gap-6 bg-surface-container-low p-4 rounded-full shadow-lg">
+<button class="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined">home</span>
+</button>
+<button class="w-12 h-12 rounded-full hover:bg-surface-container-high text-on-surface-variant flex items-center justify-center transition-all">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+<button class="w-12 h-12 rounded-full hover:bg-surface-container-high text-on-surface-variant flex items-center justify-center transition-all">
+<span class="material-symbols-outlined">emoji_events</span>
+</button>
+</div>
+</body></html>

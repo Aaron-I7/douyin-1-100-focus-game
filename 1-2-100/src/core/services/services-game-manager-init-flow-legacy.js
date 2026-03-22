@@ -1,7 +1,7 @@
-const StartupPreferenceService = require('../data-fetch/data-fetch-startup-preference-service');
-const DouyinAuthService = require('../auth/auth-douyin-auth-service-legacy');
-const CloudStorageService = require('../data-fetch/data-fetch-cloud-storage-service-legacy');
-const UserProfileManager = require('../data-fetch/data-fetch-user-profile-manager-legacy');
+/**
+ * Legacy game manager initialization flow
+ */
+
 const ShareManager = require('./services-share-manager-legacy');
 const { VoronoiGenerator, GridLayoutGenerator } = require('../shared/shared-layout-generators-legacy');
 const ThemeSystem = require('../ui/ui-theme-system-legacy');
@@ -13,64 +13,30 @@ const TouchHandler = require('../shared/shared-touch-handler-legacy');
 
 const gameInitFlowMethods = {
   async init() {
-    console.log('Initializing GameManager...');
+    console.log('Initializing GameManager (legacy mode)...');
     try {
-      console.log('Initializing Douyin cloud services...');
-      this.authService = new DouyinAuthService();
-      this.cloudStorageService = new CloudStorageService(this.authService);
-      this.userProfileManager = new UserProfileManager(this.cloudStorageService);
       this.shareManager = new ShareManager();
-      console.log('Starting user authentication...');
-      this.showLoginStatusMessage('正在登录...');
-      try {
-        const openId = await this.authService.login();
-        console.log('User authentication completed, openId:', openId);
-        if (this.authService.isAnonymous()) {
-          this.showLoginStatusMessage('使用本地模式', 2000);
-          console.log('Using anonymous mode (local storage)');
-        } else {
-          this.showLoginStatusMessage('登录成功', 1500);
-          console.log('Login successful with Douyin account');
-        }
-        console.log('Loading user profile...');
-        const profileResult = await this.userProfileManager.loadProfile();
-        this.isUserDataLoaded = profileResult.success;
-        if (profileResult.success) {
-          console.log('User profile loaded successfully from:', profileResult.source);
-        } else {
-          console.warn('Failed to load user profile, using default:', profileResult.error);
-        }
-      } catch (error) {
-        console.error('Login process failed:', error);
-        if (error.message === 'NEEDS_AUTHORIZATION') {
-          console.log('Authorization guidance needed');
-          this.showLoginStatusMessage('需要授权', 2000);
-          this.isUserDataLoaded = false;
-        } else {
-          console.warn('Login failed, falling back to anonymous mode');
-          this.showLoginStatusMessage('登录失败，使用本地模式', 3000);
-          try {
-            this.authService.openId = this.authService.generateAnonymousId();
-            this.authService.isAuthorized = false;
-            console.log('Fallback to anonymous ID:', this.authService.openId);
-          } catch (fallbackError) {
-            console.error('Even anonymous fallback failed:', fallbackError);
-            throw new Error('Complete login system failure');
-          }
-          this.isUserDataLoaded = false;
-        }
-      }
+      this.userId = this.generateLocalUserId();
+      console.log('Using local user ID:', this.userId);
+
+      this.clearLegacyProgressData();
+      this.loadGameplayModePreference();
+      this.startupPromptDisabled = this.loadStartupPromptPreference();
+      this.reducedMotionEnabled = this.loadReducedMotionPreference();
+      await this.initCloudServices();
+
       const bounds = this.screenAdapter.getGameBounds();
       this.voronoiGenerator = new VoronoiGenerator(bounds.width, bounds.height, 100);
       this.gridGenerator = new GridLayoutGenerator(bounds.width, bounds.height, 100);
       this.themeSystem = new ThemeSystem();
       this.renderEngine = new RenderEngine(this.canvas, this.ctx, this.screenAdapter, this.themeSystem);
       this.uiManager = new UIManager(this.canvas, this.ctx, this.screenAdapter, this.themeSystem);
-      this.uiManager.setUserProfileManager(this.userProfileManager);
       this.levelManager = new LevelManager();
       this.transitionManager = new TransitionManager(this.canvas, this.ctx, this.screenAdapter);
       this.touchHandler = new TouchHandler(this.canvas, [], this);
+
       this.setupOrientationMonitoring();
+
       console.log('GameManager initialized successfully');
       return true;
     } catch (error) {
@@ -79,97 +45,304 @@ const gameInitFlowMethods = {
     }
   },
 
-  async determineStartupFlow() {
+  generateLocalUserId() {
     try {
-      if (this.authService && this.authService.needsAuthorizationGuidance && this.authService.needsAuthorizationGuidance()) {
-        console.log('Showing authorization guidance');
-        this.showAuthorizationGuidance();
-        return;
+      let userId = null;
+
+      if (typeof tt !== 'undefined' && tt.getStorageSync) {
+        userId = tt.getStorageSync('local_user_id');
+      } else if (typeof localStorage !== 'undefined') {
+        userId = localStorage.getItem('local_user_id');
       }
-      await this.loadStartupPromptPreference();
-      if (!this.isUserDataLoaded || !this.userProfileManager || !this.userProfileManager.isLoaded) {
-        console.log('User data not loaded, waiting explicit start from level 1');
-        this.levelManager.setCurrentLevel(1);
-        this.pendingContinueLevel = 1;
-        this.showMenu();
-        return;
+
+      if (!userId) {
+        userId = `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        if (typeof tt !== 'undefined' && tt.setStorageSync) {
+          tt.setStorageSync('local_user_id', userId);
+        } else if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('local_user_id', userId);
+        }
       }
-      const userProfile = this.userProfileManager.getProfile();
-      console.log('User profile:', userProfile);
-      if (!userProfile.level1Completed) {
-        console.log('Level 1 not completed, waiting explicit start on level 1');
-        this.levelManager.setCurrentLevel(1);
-        this.pendingContinueLevel = 1;
-        this.showMenu();
-      } else if (!userProfile.level2Completed) {
-        console.log('Level 1 completed, waiting explicit start on level 2');
-        this.levelManager.setCurrentLevel(2);
-        this.pendingContinueLevel = 2;
-        this.showMenu();
-      } else {
-        console.log('All levels completed, showing main menu');
-        this.pendingContinueLevel = null;
-        this.showMenu();
+
+      return userId;
+    } catch (error) {
+      console.error('Failed to generate local user ID:', error);
+      return `local_${Date.now()}`;
+    }
+  },
+
+  clearLegacyProgressData() {
+    try {
+      if (typeof tt !== 'undefined' && tt.removeStorageSync) {
+        tt.removeStorageSync('user_progress');
+      } else if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('user_progress');
+      }
+      this.isUserDataLoaded = true;
+    } catch (error) {
+      console.warn('Failed to clear legacy progress data:', error);
+      this.isUserDataLoaded = false;
+    }
+  },
+
+  async initCloudServices() {
+    this.cloudEnabled = false;
+    this.cloudClient = null;
+    try {
+      if (typeof tt === 'undefined' || !tt.cloud || typeof tt.cloud.init !== 'function') {
+        return false;
+      }
+
+      await this.ensureUserLogin();
+
+      const options = this.getCloudInitOptions();
+      if (!options) {
+        console.warn('Cloud init skipped: missing serviceId/env config');
+        return false;
+      }
+      const initResult = tt.cloud.init(options);
+      if (initResult && typeof initResult.then === 'function') {
+        await initResult;
+      }
+      if (typeof tt.createCloud === 'function') {
+        try {
+          const clientOptions = this.getCloudClientOptions();
+          if (clientOptions) {
+            this.cloudClient = tt.createCloud(clientOptions);
+          } else {
+            this.cloudClient = null;
+          }
+        } catch (createClientError) {
+          console.warn('createCloud failed, fallback to tt.cloud:', createClientError);
+          this.cloudClient = null;
+        }
+      }
+      this.cloudEnabled = true;
+      return true;
+    } catch (error) {
+      this.cloudEnabled = false;
+      console.warn('Cloud init skipped:', error);
+      return false;
+    }
+  },
+
+  async ensureUserLogin() {
+    if (typeof tt === 'undefined' || typeof tt.login !== 'function') {
+      return false;
+    }
+    return new Promise((resolve) => {
+      tt.login({
+        success: (res) => {
+          console.log('[Cloud] User login success:', res.code ? 'code received' : 'logged in');
+          resolve(true);
+        },
+        fail: (err) => {
+          console.warn('[Cloud] User login failed:', err);
+          resolve(false);
+        }
+      });
+    });
+  },
+
+  getCloudInitOptions() {
+    // Fill one of these in game.js / launch config when cloud is ready:
+    // this.cloudServiceId = 'your-service-id'
+    // this.cloudEnvId = 'your-env-id'
+    const fromStorage = (key) => {
+      try {
+        if (typeof tt !== 'undefined' && tt.getStorageSync) {
+          return tt.getStorageSync(key) || '';
+        }
+      } catch (e) {
+      }
+      return '';
+    };
+
+    const serviceId = this.cloudServiceId || fromStorage('cloud_service_id');
+    const env = this.cloudEnvId || fromStorage('cloud_env_id');
+    if (serviceId) {
+      // Keep both key styles for SDK compatibility.
+      return { serviceID: serviceId, serviceId };
+    }
+    if (env) {
+      // Keep both key styles for SDK compatibility.
+      return { envID: env, env };
+    }
+    return null;
+  },
+
+  getCloudClientOptions() {
+    const fromStorage = (key) => {
+      try {
+        if (typeof tt !== 'undefined' && tt.getStorageSync) {
+          return tt.getStorageSync(key) || '';
+        }
+      } catch (e) {
+      }
+      return '';
+    };
+    const env = this.cloudEnvId || fromStorage('cloud_env_id');
+    const serviceId = this.cloudServiceId || fromStorage('cloud_service_id');
+    if (!env || !serviceId) {
+      return null;
+    }
+    return { envID: env, env, serviceID: serviceId, serviceId };
+  },
+
+  loadGameplayModePreference() {
+    const fallbackMode = this.gameplayModes ? this.gameplayModes.SIMPLE : 'simple';
+    const validModes = this.gameplayModes ? Object.values(this.gameplayModes) : [fallbackMode];
+    const storageKey = this.gameplayModeStorageKey || 'gameplay_mode_100';
+    const storageVersionKey = `${storageKey}_version`;
+
+    const normalizeLegacyMode = (rawMode, shouldMapLegacyHard) => {
+      if (rawMode === 'medium') {
+        return this.gameplayModes ? this.gameplayModes.HARD : 'hard';
+      }
+      if (shouldMapLegacyHard && rawMode === 'hard') {
+        return this.gameplayModes && this.gameplayModes.HELL ? this.gameplayModes.HELL : 'hell';
+      }
+      return rawMode;
+    };
+
+    try {
+      let storedMode = null;
+      let storedVersion = 0;
+
+      if (typeof tt !== 'undefined' && tt.getStorageSync) {
+        storedMode = tt.getStorageSync(storageKey);
+        storedVersion = Number(tt.getStorageSync(storageVersionKey) || 0);
+      } else if (typeof localStorage !== 'undefined') {
+        storedMode = localStorage.getItem(storageKey);
+        storedVersion = Number(localStorage.getItem(storageVersionKey) || 0);
+      }
+
+      const shouldMapLegacyHard = storedVersion < 2;
+      const normalizedMode = normalizeLegacyMode(storedMode, shouldMapLegacyHard);
+      this.gameplayMode = validModes.includes(normalizedMode) ? normalizedMode : fallbackMode;
+
+      if (shouldMapLegacyHard) {
+        if (typeof tt !== 'undefined' && tt.setStorageSync) {
+          tt.setStorageSync(storageKey, this.gameplayMode);
+          tt.setStorageSync(storageVersionKey, 2);
+        } else if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(storageKey, this.gameplayMode);
+          localStorage.setItem(storageVersionKey, '2');
+        }
       }
     } catch (error) {
+      console.error('Failed to load gameplay mode preference:', error);
+      this.gameplayMode = fallbackMode;
+    }
+  },
+
+  saveGameplayModePreference(mode) {
+    const fallbackMode = this.gameplayModes ? this.gameplayModes.SIMPLE : 'simple';
+    const validModes = this.gameplayModes ? Object.values(this.gameplayModes) : [fallbackMode];
+    const nextMode = validModes.includes(mode) ? mode : fallbackMode;
+    const storageKey = this.gameplayModeStorageKey || 'gameplay_mode_100';
+    const storageVersionKey = `${storageKey}_version`;
+
+    try {
+      if (typeof tt !== 'undefined' && tt.setStorageSync) {
+        tt.setStorageSync(storageKey, nextMode);
+        tt.setStorageSync(storageVersionKey, 2);
+      } else if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(storageKey, nextMode);
+        localStorage.setItem(storageVersionKey, '2');
+      }
+      this.gameplayMode = nextMode;
+    } catch (error) {
+      console.error('Failed to save gameplay mode preference:', error);
+      this.gameplayMode = nextMode;
+    }
+  },
+
+  loadStartupPromptPreference() {
+    const key = 'startup_prompt_disabled';
+    try {
+      if (typeof tt !== 'undefined' && tt.getStorageSync) {
+        return !!tt.getStorageSync(key);
+      }
+      if (typeof localStorage !== 'undefined') {
+        return localStorage.getItem(key) === '1';
+      }
+    } catch (error) {
+      console.warn('Failed to load startup prompt preference:', error);
+    }
+    return false;
+  },
+
+  persistStartupPromptPreference(disabled) {
+    const key = 'startup_prompt_disabled';
+    this.startupPromptDisabled = !!disabled;
+    try {
+      if (typeof tt !== 'undefined' && tt.setStorageSync) {
+        tt.setStorageSync(key, this.startupPromptDisabled);
+      } else if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(key, this.startupPromptDisabled ? '1' : '0');
+      }
+    } catch (error) {
+      console.warn('Failed to save startup prompt preference:', error);
+    }
+    return this.startupPromptDisabled;
+  },
+
+  loadReducedMotionPreference() {
+    const key = 'reduced_motion_enabled';
+    try {
+      if (typeof tt !== 'undefined' && tt.getStorageSync) {
+        return !!tt.getStorageSync(key);
+      }
+      if (typeof localStorage !== 'undefined') {
+        return localStorage.getItem(key) === '1';
+      }
+    } catch (error) {
+      console.warn('Failed to load reduced motion preference:', error);
+    }
+    return false;
+  },
+
+  persistReducedMotionPreference(enabled) {
+    const key = 'reduced_motion_enabled';
+    this.reducedMotionEnabled = !!enabled;
+    try {
+      if (typeof tt !== 'undefined' && tt.setStorageSync) {
+        tt.setStorageSync(key, this.reducedMotionEnabled);
+      } else if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(key, this.reducedMotionEnabled ? '1' : '0');
+      }
+    } catch (error) {
+      console.warn('Failed to save reduced motion preference:', error);
+    }
+    return this.reducedMotionEnabled;
+  },
+
+  async determineStartupFlow() {
+    try {
+      console.log('Determining startup flow...');
+      this.showMenu();
+    } catch (error) {
       console.error('Error determining startup flow:', error);
-      console.log('Error occurred, fallback to explicit start level 1');
-      this.levelManager.setCurrentLevel(1);
-      this.pendingContinueLevel = 1;
       this.showMenu();
     }
   },
 
   async handleUserAuthorization(authorized) {
-    try {
-      if (authorized) {
-        console.log('User authorized, attempting login...');
-        this.showLoginStatusMessage('正在登录...');
-        const openId = await this.authService.userAuthorized();
-        console.log('Authorization login successful, openId:', openId);
-        this.showLoginStatusMessage('登录成功', 1500);
-        console.log('Loading user profile after authorization...');
-        const profileResult = await this.userProfileManager.loadProfile();
-        this.isUserDataLoaded = profileResult.success;
-        if (profileResult.success) {
-          console.log('User profile loaded successfully after authorization');
-        } else {
-          console.warn('Failed to load user profile after authorization:', profileResult.error);
-        }
-        setTimeout(() => {
-          this.determineStartupFlow();
-        }, 1600);
-      } else {
-        console.log('User denied authorization, using local storage');
-        this.showLoginStatusMessage('使用本地模式', 2000);
-        const anonymousId = this.authService.userDeniedAuthorization();
-        console.log('Using anonymous ID:', anonymousId);
-        this.isUserDataLoaded = false;
-        setTimeout(() => {
-          this.determineStartupFlow();
-        }, 2100);
-      }
-    } catch (error) {
-      console.error('Error handling user authorization:', error);
-      console.log('Authorization failed, falling back to anonymous mode');
-      this.showLoginStatusMessage('授权失败，使用本地模式', 3000);
-      this.authService.userDeniedAuthorization();
-      this.isUserDataLoaded = false;
-      setTimeout(() => {
-        this.determineStartupFlow();
-      }, 3100);
-    }
+    console.log('Authorization decision:', authorized ? 'granted' : 'denied');
+    this.showMenu();
   },
 
-  async loadStartupPromptPreference() {
-    this.startupPromptDisabled = await StartupPreferenceService.load(this.userProfileManager);
-    if (this.uiManager && typeof this.uiManager.setStartupPromptDisabled === 'function') {
-      this.uiManager.setStartupPromptDisabled(this.startupPromptDisabled);
-    }
+  showLoginStatusMessage(message) {
+    console.log(`[Login Status] ${message}`);
   },
 
-  async persistStartupPromptPreference(disabled) {
-    this.startupPromptDisabled = await StartupPreferenceService.persist(disabled, this.userProfileManager, this.cloudStorageService);
+  setupOrientationMonitoring() {
+    if (typeof tt !== 'undefined' && tt.onDeviceOrientationChange) {
+      tt.onDeviceOrientationChange((res) => {
+        console.log('Device orientation changed:', res);
+      });
+    }
   }
 };
 

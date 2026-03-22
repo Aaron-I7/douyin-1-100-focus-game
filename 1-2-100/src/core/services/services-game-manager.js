@@ -61,12 +61,13 @@ class GameManager {
     if (this.services && this.services.levelManager) {
       this.levelManager = this.services.levelManager;
     }
-    if (this.services && this.services.adManager) {
-      this.services.adManager.gameManager = this;
-      if (this.services.analyticsManager && !this.services.adManager.analyticsManager) {
-        this.services.adManager.analyticsManager = this.services.analyticsManager;
-      }
-    }
+    // 广告和分析功能已禁用
+    // if (this.services && this.services.adManager) {
+    //   this.services.adManager.gameManager = this;
+    //   if (this.services.analyticsManager && !this.services.adManager.analyticsManager) {
+    //     this.services.adManager.analyticsManager = this.services.analyticsManager;
+    //   }
+    // }
     this.ensureScreenAdapter();
   }
 
@@ -228,6 +229,7 @@ class GameManager {
       if (typeof tt !== 'undefined' && typeof tt.onTouchStart === 'function') {
         this.touchHandler = new TouchHandler(this.canvas, this.cells);
         this.touchHandler.onCellClick = (cell) => this.handleCellClick(cell);
+        this.touchHandler.onCanvasClick = (pos) => this.handleGameCanvasClick(pos);
       } else {
         this.touchHandler = {
           updateCells: () => {},
@@ -235,8 +237,12 @@ class GameManager {
           setEnabled: () => {}
         };
       }
-    } else if (typeof this.touchHandler.updateCells === 'function') {
-      this.touchHandler.updateCells(this.cells);
+    } else {
+      if (typeof this.touchHandler.updateCells === 'function') {
+        this.touchHandler.updateCells(this.cells);
+      }
+      // Ensure handler is updated (in case of restart)
+      this.touchHandler.onCanvasClick = (pos) => this.handleGameCanvasClick(pos);
     }
     
     // 启动计时器
@@ -372,19 +378,20 @@ class GameManager {
     
     // 停止游戏
     this.stopGame();
-    if (this.services && this.services.analyticsManager && typeof this.services.analyticsManager.trackEvent === 'function') {
-      const adManager = this.services.adManager;
-      const hintsUsed = adManager && typeof adManager.getHintCount === 'function' ? adManager.getHintCount() : 0;
-      const revivesUsed = adManager && typeof adManager.getReviveCount === 'function' ? adManager.getReviveCount() : 0;
-      this.services.analyticsManager.trackEvent('game_complete', {
-        level: this.currentLevel === 'custom' ? 1 : this.currentLevel,
-        time: this.elapsedTime,
-        errors: this.errors,
-        hintsUsed,
-        revivesUsed,
-        adAssisted: hintsUsed > 0 || revivesUsed > 0
-      });
-    }
+    // 数据分析功能已禁用
+    // if (this.services && this.services.analyticsManager && typeof this.services.analyticsManager.trackEvent === 'function') {
+    //   const adManager = this.services.adManager;
+    //   const hintsUsed = adManager && typeof adManager.getHintCount === 'function' ? adManager.getHintCount() : 0;
+    //   const revivesUsed = adManager && typeof adManager.getReviveCount === 'function' ? adManager.getReviveCount() : 0;
+    //   this.services.analyticsManager.trackEvent('game_complete', {
+    //     level: this.currentLevel === 'custom' ? 1 : this.currentLevel,
+    //     time: this.elapsedTime,
+    //     errors: this.errors,
+    //     hintsUsed,
+    //     revivesUsed,
+    //     adAssisted: hintsUsed > 0 || revivesUsed > 0
+    //   });
+    // }
     
     // 如果是正式关卡，更新关卡管理器
     if (this.currentLevel !== 'custom') {
@@ -761,9 +768,10 @@ class GameManager {
   }
 
   async startNewGame() {
-    if (this.services && this.services.adManager && typeof this.services.adManager.resetGameSession === 'function') {
-      this.services.adManager.resetGameSession();
-    }
+    // 广告功能已禁用
+    // if (this.services && this.services.adManager && typeof this.services.adManager.resetGameSession === 'function') {
+    //   this.services.adManager.resetGameSession();
+    // }
     this.reset();
     this.startLevel(1);
     return true;
@@ -781,6 +789,39 @@ class GameManager {
     if (!this.screenAdapter || typeof this.screenAdapter.getGameBounds !== 'function') {
       this.screenAdapter = this.createScreenAdapterFallback();
     }
+  }
+
+  handleGameCanvasClick(pos) {
+    if (!this.isGamePlaying()) return false;
+    
+    const safeTop = this.screenAdapter && this.screenAdapter.safeArea && typeof this.screenAdapter.safeArea.top === 'number'
+      ? this.screenAdapter.safeArea.top
+      : 20;
+      
+    // Exit Button Logic (Top Left)
+    const exitX = 16;
+    const exitY = safeTop + 12;
+    const exitSize = 32;
+    const padding = 15; // touch padding
+    
+    if (pos.x >= exitX - padding && pos.x <= exitX + exitSize + padding &&
+        pos.y >= exitY - padding && pos.y <= exitY + exitSize + padding) {
+        
+        console.log('Exit button clicked');
+        this.stopGame();
+        
+        // Return to menu
+        if (typeof this.showMenu === 'function') {
+            this.showMenu();
+        } else {
+            // Fallback if showMenu not mixed in yet (unlikely)
+            this.state = 'menu';
+            if (this.uiManager) this.uiManager.render('start');
+        }
+        return true; // handled
+    }
+    
+    return false;
   }
 
   /**

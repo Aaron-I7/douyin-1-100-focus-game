@@ -14,6 +14,7 @@ class TouchHandler {
     // 回调函数
     this.onCellClick = null;
     this.onMouseMove = null;
+    this.onCanvasClick = null;
     
     this.setupEventListeners();
   }
@@ -29,6 +30,12 @@ class TouchHandler {
       const touch = event.touches[0];
       const pos = this.getTouchPosition(touch);
       this.lastTouchPos = pos;
+      
+      // Pass touch start to canvas handler if defined (for buttons that need press state)
+      if (this.onCanvasTouchStart) {
+         this.onCanvasTouchStart(pos);
+      }
+      
       this.handleTouchStart(pos);
     });
 
@@ -84,7 +91,13 @@ class TouchHandler {
    */
   handleTap(pos) {
     try {
-      // 检测点击了哪个 Cell
+      // First check if a UI element was clicked (if handler provided)
+      if (this.onCanvasClick) {
+         const handled = this.onCanvasClick(pos);
+         if (handled) return;
+      }
+
+      // Detect cell click
       const clickedCell = this.findCellAtPosition(pos);
       
       if (clickedCell && this.onCellClick) {
@@ -143,15 +156,7 @@ class TouchHandler {
    * 触发震动反馈
    */
   vibrate(type = 'light') {
-    try {
-      if (type === 'heavy') {
-        tt.vibrateShort({ type: 'heavy' });
-      } else {
-        tt.vibrateShort({ type: 'light' });
-      }
-    } catch (error) {
-      console.warn('Vibration not supported:', error);
-    }
+    return;
   }
 }
 

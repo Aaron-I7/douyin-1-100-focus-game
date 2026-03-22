@@ -1,0 +1,37 @@
+  <svg width="100%" height="100%" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="512" height="512" rx="128" fill="#F8FAF8"/>
+    
+    {/* Neomorphic Base */}
+    <rect x="60" y="60" width="392" height="392" rx="80" fill="#F1F4F2" />
+    
+    <defs>
+      <linearGradient id="sageGradient" x1="216" y1="216" x2="296" y2="296" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#426564"/>
+        <stop offset="1" stopColor="#365958"/>
+      </linearGradient>
+      
+      <filter id="tileShadow" x="-10" y="-10" width="100" height="100" filterUnits="userSpaceOnUse">
+        <feDropShadow dx="4" dy="4" stdDeviation="4" floodColor="#000000" floodOpacity="0.08"/>
+        <feDropShadow dx="-4" dy="-4" stdDeviation="4" floodColor="#FFFFFF" floodOpacity="0.9"/>
+      </filter>
+    </defs>
+
+    {/* Grid Tiles */}
+    <g transform="translate(106, 106)">
+      {/* Row 1 */}
+      <rect x="0" y="0" width="80" height="80" rx="20" fill="#DDE4E1" filter="url(#tileShadow)"/>
+      <rect x="110" y="0" width="80" height="80" rx="20" fill="#DDE4E1" filter="url(#tileShadow)"/>
+      <rect x="220" y="0" width="80" height="80" rx="20" fill="#DDE4E1" filter="url(#tileShadow)"/>
+      
+      {/* Row 2 */}
+      <rect x="0" y="110" width="80" height="80" rx="20" fill="#DDE4E1" filter="url(#tileShadow)"/>
+      {/* Highlighted Center Tile */}
+      <rect x="110" y="110" width="80" height="80" rx="20" fill="url(#sageGradient)" filter="url(#tileShadow)"/>
+      <rect x="220" y="110" width="80" height="80" rx="20" fill="#DDE4E1" filter="url(#tileShadow)"/>
+      
+      {/* Row 3 */}
+      <rect x="0" y="220" width="80" height="80" rx="20" fill="#DDE4E1" filter="url(#tileShadow)"/>
+      <rect x="110" y="220" width="80" height="80" rx="20" fill="#DDE4E1" filter="url(#tileShadow)"/>
+      <rect x="220" y="220" width="80" height="80" rx="20" fill="#DDE4E1" filter="url(#tileShadow)"/>
+    </g>
+  </svg>

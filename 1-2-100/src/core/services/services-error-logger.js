@@ -320,32 +320,6 @@ class ErrorLogger {
     if (typeof window !== 'undefined' && window.errorReporter) {
       await window.errorReporter.reportBatch('error_logs', logs);
     }
-
-    // 上报到云函数（如果可用）
-    if (typeof tt !== 'undefined' && tt.cloud && tt.cloud.callFunction) {
-      try {
-        await tt.cloud.callFunction({
-          name: 'report_errors',
-          data: {
-            sessionId: this.sessionId,
-            logs: logs.map(log => ({
-              id: log.id,
-              timestamp: log.timestamp,
-              type: log.type,
-              message: log.message,
-              severity: log.severity,
-              fingerprint: log.fingerprint,
-              context: {
-                gameState: log.context.gameState,
-                systemInfo: log.context.systemInfo
-              }
-            }))
-          }
-        });
-      } catch (cloudError) {
-        console.warn('Failed to report to cloud function:', cloudError);
-      }
-    }
   }
 
   /**

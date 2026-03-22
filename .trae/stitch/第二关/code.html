@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-low": "#f1f4f2",
+              "surface-variant": "#dde4e1",
+              "tertiary-fixed-dim": "#eed9c6",
+              "on-error-container": "#6e0a12",
+              "error-container": "#fa746f",
+              "secondary-fixed-dim": "#bddad8",
+              "tertiary-container": "#fde7d3",
+              "surface": "#f8faf8",
+              "secondary-container": "#cbe8e6",
+              "outline-variant": "#acb3b1",
+              "primary-container": "#c4eae8",
+              "error": "#a83836",
+              "on-tertiary-fixed-variant": "#6d5e4f",
+              "on-tertiary-container": "#635445",
+              "on-secondary": "#e1fffd",
+              "on-primary": "#e0fffe",
+              "secondary": "#496463",
+              "background": "#f8faf8",
+              "primary-dim": "#365958",
+              "outline": "#757c7a",
+              "inverse-surface": "#0b0f0e",
+              "secondary-dim": "#3d5857",
+              "on-tertiary": "#fff7f3",
+              "on-background": "#2d3432",
+              "surface-container-high": "#e4e9e7",
+              "primary": "#426564",
+              "tertiary-dim": "#5f5142",
+              "tertiary": "#6c5c4d",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-fixed": "#294443",
+              "inverse-on-surface": "#9b9d9c",
+              "on-surface-variant": "#59615f",
+              "surface-tint": "#426564",
+              "on-primary-fixed-variant": "#3e6261",
+              "on-surface": "#2d3432",
+              "surface-bright": "#f8faf8",
+              "primary-fixed": "#c4eae8",
+              "on-tertiary-fixed": "#504234",
+              "on-primary-container": "#345857",
+              "on-secondary-container": "#3c5755",
+              "error-dim": "#67040d",
+              "tertiary-fixed": "#fde7d3",
+              "surface-dim": "#d4dcd9",
+              "surface-container": "#eaefec",
+              "surface-container-highest": "#dde4e1",
+              "on-error": "#fff7f6",
+              "on-secondary-fixed-variant": "#45605f",
+              "primary-fixed-dim": "#b6dcda",
+              "secondary-fixed": "#cbe8e6",
+              "inverse-primary": "#d7fefc",
+              "on-primary-fixed": "#214544"
+            },
+            fontFamily: {
+              "headline": ["Manrope", "sans-serif"],
+              "body": ["Manrope", "sans-serif"],
+              "label": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .neomorphic-tile {
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08), -4px -4px 8px rgba(255, 255, 255, 0.9);
+        }
+        .neomorphic-tile:active {
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.08), inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+            transform: scale(0.98);
+        }
+        .neomorphic-container {
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.05), -8px -8px 16px rgba(255, 255, 255, 0.8);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface min-h-screen flex flex-col">
+<header class="docked full-width px-4 pt-2 bg-surface shadow-[4px_4px_10px_rgba(0,0,0,0.05),-4px_-4px_10px_rgba(255,255,255,0.8)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full max-w-2xl mx-auto h-16">
+<button class="hover:bg-surface-container-high transition-all p-2 rounded-full scale-95 active:duration-150">
+<span class="material-symbols-outlined text-primary" data-icon="menu">menu</span>
+</button>
+<h1 class="font-manrope text-headline-md font-medium tracking-tight text-primary">第二关：世纪挑战</h1>
+<button class="hover:bg-surface-container-high transition-all p-2 rounded-full scale-95 active:duration-150">
+<span class="material-symbols-outlined text-primary" data-icon="settings">settings</span>
+</button>
+</div>
+</header>
+<main class="flex-grow flex flex-col items-center px-4 pt-8 pb-32 max-w-5xl mx-auto w-full">
+<section class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 items-end">
+<div class="flex flex-col gap-1 order-2 md:order-1">
+<span class="text-label-md font-medium tracking-widest text-on-surface-variant opacity-60 uppercase">用时</span>
+<div class="text-headline-md font-semibold font-manrope text-secondary tabular-nums">00:00:00</div>
+</div>
+<div class="flex flex-col items-center justify-center order-1 md:order-2">
+<span class="text-label-md font-medium tracking-widest text-on-surface-variant opacity-60 uppercase mb-2">当前目标</span>
+<div class="relative">
+<div class="w-24 h-24 rounded-3xl bg-surface-container-lowest flex items-center justify-center neomorphic-container">
+<span class="text-display-lg font-bold text-primary tabular-nums">1</span>
+</div>
+<div class="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-on-primary text-sm" data-icon="target">target</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1 order-3">
+<span class="text-label-md font-medium tracking-widest text-on-surface-variant opacity-60 uppercase">错误</span>
+<div class="text-headline-md font-semibold font-manrope text-error tabular-nums">0</div>
+</div>
+</section>
+<section class="w-full aspect-square max-w-[800px] bg-surface-container-low p-4 md:p-6 rounded-[2rem] neomorphic-container overflow-hidden">
+<div class="grid grid-cols-10 grid-rows-10 gap-1.5 md:gap-2 h-full w-full">
+<!-- Grid Generation (Sample representative numbers shown) -->
+<!-- The grid would be filled with 100 tiles. I'll provide a selection showing the layout. -->
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group">
+<span class="text-headline-md font-medium text-on-surface group-active:scale-90 transition-transform tabular-nums">42</span>
+</div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group">
+<span class="text-headline-md font-medium text-on-surface group-active:scale-90 transition-transform tabular-nums">17</span>
+</div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group">
+<span class="text-headline-md font-medium text-on-surface group-active:scale-90 transition-transform tabular-nums">89</span>
+</div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group">
+<span class="text-headline-md font-medium text-on-surface group-active:scale-90 transition-transform tabular-nums">5</span>
+</div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group">
+<span class="text-headline-md font-medium text-on-surface group-active:scale-90 transition-transform tabular-nums">63</span>
+</div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group">
+<span class="text-headline-md font-medium text-on-surface group-active:scale-90 transition-transform tabular-nums">21</span>
+</div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group">
+<span class="text-headline-md font-medium text-on-surface group-active:scale-90 transition-transform tabular-nums">77</span>
+</div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group">
+<span class="text-headline-md font-medium text-on-surface group-active:scale-90 transition-transform tabular-nums">12</span>
+</div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group">
+<span class="text-headline-md font-medium text-on-surface group-active:scale-90 transition-transform tabular-nums">94</span>
+</div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group">
+<span class="text-headline-md font-medium text-on-surface group-active:scale-90 transition-transform tabular-nums">33</span>
+</div>
+<!-- Row 2 -->
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group">
+<span class="text-headline-md font-medium text-on-surface group-active:scale-90 transition-transform tabular-nums">56</span>
+</div>
+<!-- ... repeated for 100 tiles ... -->
+<!-- Visual mock for filling the rest of the 10x10 space efficiently -->
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group"><span class="text-headline-md font-medium text-on-surface tabular-nums">1</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group"><span class="text-headline-md font-medium text-on-surface tabular-nums">82</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group"><span class="text-headline-md font-medium text-on-surface tabular-nums">14</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group"><span class="text-headline-md font-medium text-on-surface tabular-nums">39</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group"><span class="text-headline-md font-medium text-on-surface tabular-nums">91</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group"><span class="text-headline-md font-medium text-on-surface tabular-nums">27</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group"><span class="text-headline-md font-medium text-on-surface tabular-nums">68</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group"><span class="text-headline-md font-medium text-on-surface tabular-nums">100</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer group"><span class="text-headline-md font-medium text-on-surface tabular-nums">45</span></div>
+<!-- Placeholder loop representation for the remaining tiles -->
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+<div class="neomorphic-tile bg-surface-container-lowest rounded-lg md:rounded-xl flex items-center justify-center opacity-50"><span class="text-headline-md font-medium text-on-surface tabular-nums">...</span></div>
+</div>
+</section>
+<section class="mt-12 w-full max-w-2xl flex justify-center gap-4">
+<button class="bg-surface-container-high text-on-surface px-8 py-3 rounded-xl font-semibold hover:scale-105 active:scale-95 transition-all shadow-md">
+                重新开始
+            </button>
+<button class="bg-primary text-on-primary px-8 py-3 rounded-xl font-semibold hover:scale-105 active:scale-95 transition-all shadow-md">
+                暂停
+            </button>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 right-0 z-50">
+<div class="max-w-2xl mx-auto flex justify-around items-center w-full bg-surface-container-low/70 backdrop-blur-xl floating pill mx-8 mb-8 rounded-[2rem] py-3 shadow-[8px_8px_16px_rgba(0,0,0,0.08),-8px_-8px_16px_rgba(255,255,255,0.9)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 px-5 py-2 hover:scale-110 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-manrope text-[10px] font-medium tracking-widest uppercase">首页</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-2xl px-5 py-2 scale-105 shadow-inner transition-all" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="grid_view" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="font-manrope text-[10px] font-medium tracking-widest uppercase">挑战</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 px-5 py-2 hover:scale-110 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="emoji_events">emoji_events</span>
+<span class="font-manrope text-[10px] font-medium tracking-widest uppercase">成就</span>
+</a>
+</div>
+</nav>
+</body></html>

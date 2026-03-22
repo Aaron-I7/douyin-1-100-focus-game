@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed": "#cbe8e6",
+              "surface-container-highest": "#dde4e1",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-fixed": "#294443",
+              "primary": "#426564",
+              "error-container": "#fa746f",
+              "background": "#f8faf8",
+              "on-background": "#2d3432",
+              "on-tertiary": "#fff7f3",
+              "surface-bright": "#f8faf8",
+              "tertiary-container": "#fde7d3",
+              "on-tertiary-container": "#635445",
+              "outline": "#757c7a",
+              "on-secondary": "#e1fffd",
+              "on-tertiary-fixed": "#504234",
+              "secondary": "#496463",
+              "on-primary-fixed-variant": "#3e6261",
+              "primary-container": "#c4eae8",
+              "inverse-on-surface": "#9b9d9c",
+              "on-surface": "#2d3432",
+              "surface-container": "#eaefec",
+              "tertiary-fixed": "#fde7d3",
+              "primary-fixed": "#c4eae8",
+              "on-tertiary-fixed-variant": "#6d5e4f",
+              "error": "#a83836",
+              "inverse-surface": "#0b0f0e",
+              "surface-container-low": "#f1f4f2",
+              "primary-fixed-dim": "#b6dcda",
+              "on-secondary-fixed-variant": "#45605f",
+              "on-error": "#fff7f6",
+              "on-error-container": "#6e0a12",
+              "surface-dim": "#d4dcd9",
+              "secondary-container": "#cbe8e6",
+              "on-surface-variant": "#59615f",
+              "tertiary-dim": "#5f5142",
+              "on-primary": "#e0fffe",
+              "error-dim": "#67040d",
+              "tertiary": "#6c5c4d",
+              "surface-container-high": "#e4e9e7",
+              "on-primary-container": "#345857",
+              "surface-tint": "#426564",
+              "on-primary-fixed": "#214544",
+              "surface-variant": "#dde4e1",
+              "on-secondary-container": "#3c5755",
+              "surface": "#f8faf8",
+              "inverse-primary": "#d7fefc",
+              "secondary-dim": "#3d5857",
+              "outline-variant": "#acb3b1",
+              "tertiary-fixed-dim": "#eed9c6",
+              "secondary-fixed-dim": "#bddad8",
+              "primary-dim": "#365958"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .neomorphic-emboss {
+            box-shadow: 8px 8px 16px rgba(0,0,0,0.08), -8px -8px 16px rgba(255,255,255,0.9);
+        }
+        .neomorphic-inset {
+            box-shadow: inset 4px 4px 8px rgba(0,0,0,0.05), inset -4px -4px 8px rgba(255,255,255,0.8);
+        }
+        .gradient-glow {
+            background: linear-gradient(135deg, #426564 0%, #c4eae8 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body min-h-screen flex flex-col">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 left-0 right-0 z-50">
+<div class="bg-surface docked full-width px-4 pt-2 flex justify-between items-center w-full max-w-2xl mx-auto shadow-[4px_4px_10px_rgba(0,0,0,0.05),-4px_-4px_10px_rgba(255,255,255,0.8)] h-16">
+<button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-surface-container-high transition-all active:scale-95 cubic-bezier(0.34,1.56,0.64,1)">
+<span class="material-symbols-outlined text-primary" data-icon="menu">menu</span>
+</button>
+<h1 class="font-manrope text-headline-md font-semibold text-primary tracking-wide">舒尔特方格</h1>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-surface-container-high transition-all active:scale-95 cubic-bezier(0.34,1.56,0.64,1)">
+<span class="material-symbols-outlined text-primary" data-icon="settings">settings</span>
+</button>
+</div>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center px-6 pt-24 pb-32 max-w-2xl mx-auto w-full relative">
+<!-- Celebratory Background Patterns (Asymmetric Editorial Style) -->
+<div class="absolute top-40 -left-12 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
+<div class="absolute bottom-40 -right-12 w-80 h-80 bg-tertiary-container/20 rounded-full blur-3xl -z-10"></div>
+<!-- 3D Tactile Medal Hero -->
+<div class="mb-12 relative">
+<div class="w-48 h-48 rounded-full bg-surface-container-low neomorphic-emboss flex items-center justify-center relative">
+<div class="w-40 h-40 rounded-full gradient-glow shadow-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-8xl" data-icon="workspace_premium" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+<!-- Floaties -->
+<div class="absolute -top-4 -right-2 w-12 h-12 bg-tertiary rounded-2xl neomorphic-emboss flex items-center justify-center transform rotate-12">
+<span class="material-symbols-outlined text-on-tertiary text-2xl" data-icon="star">star</span>
+</div>
+<div class="absolute bottom-2 -left-6 w-10 h-10 bg-primary-container rounded-full neomorphic-emboss flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="auto_awesome">auto_awesome</span>
+</div>
+</div>
+</div>
+<!-- Typography Headline -->
+<div class="text-center mb-10">
+<h2 class="font-manrope text-5xl font-extrabold text-primary tracking-tight mb-4">恭喜通关！</h2>
+<p class="font-manrope text-title-md text-on-surface-variant max-w-xs mx-auto opacity-80 leading-relaxed">
+                你已成功通过所有关卡，成为了专注大师。
+            </p>
+</div>
+<!-- Stats Bento Grid (Asymmetric Layout) -->
+<div class="w-full grid grid-cols-2 gap-4 mb-12">
+<!-- Long Card: Total Time -->
+<div class="col-span-2 bg-surface-container-low rounded-[2rem] p-6 neomorphic-emboss flex items-center justify-between">
+<div>
+<span class="font-manrope text-label-md font-medium tracking-widest uppercase text-outline mb-1 block">总计耗时</span>
+<p class="font-manrope text-4xl font-bold text-primary tracking-tight">02:45</p>
+</div>
+<div class="w-14 h-14 bg-surface-container-highest rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="timer">timer</span>
+</div>
+</div>
+<!-- Square Card: Level 1 -->
+<div class="bg-surface-container-low rounded-[2rem] p-6 neomorphic-emboss">
+<span class="font-manrope text-label-md font-medium tracking-widest uppercase text-outline mb-4 block">3x3 基础</span>
+<p class="font-manrope text-3xl font-bold text-on-surface tracking-tighter mb-1">12.4s</p>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="text-xs font-bold uppercase tracking-tighter">极速挑战</span>
+</div>
+</div>
+<!-- Square Card: Level 2 -->
+<div class="bg-surface-container-low rounded-[2rem] p-6 neomorphic-emboss">
+<span class="font-manrope text-label-md font-medium tracking-widest uppercase text-outline mb-4 block">5x5 进阶</span>
+<p class="font-manrope text-3xl font-bold text-on-surface tracking-tighter mb-1">48.2s</p>
+<div class="flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-sm" data-icon="psychology" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span class="text-xs font-bold uppercase tracking-tighter">专注巅峰</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="w-full space-y-4">
+<button class="w-full bg-primary text-on-primary py-5 rounded-full font-manrope text-title-md font-bold tracking-wide shadow-lg hover:scale-[1.02] active:scale-95 transition-all cubic-bezier(0.34,1.56,0.64,1) flex items-center justify-center gap-3">
+<span class="material-symbols-outlined" data-icon="replay">replay</span>
+                再玩一次
+            </button>
+<button class="w-full bg-secondary-container text-on-secondary-container py-5 rounded-full font-manrope text-title-md font-bold tracking-wide hover:bg-secondary-fixed transition-all flex items-center justify-center gap-3">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+                分享战绩
+            </button>
+</div>
+</main>
+<!-- Navigation Shell Anchor -->
+<nav class="fixed bottom-0 left-0 right-0 z-50">
+<div class="max-w-2xl mx-auto px-8 mb-8">
+<div class="bg-surface-container-low/70 backdrop-blur-xl floating pill rounded-[2rem] py-3 flex justify-around items-center w-full shadow-[8px_8px_16px_rgba(0,0,0,0.08),-8px_-8px_16px_rgba(255,255,255,0.9)]">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 px-5 py-2 hover:scale-110 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-manrope text-[10px] font-medium tracking-widest uppercase">首页</span>
+</a>
+<!-- Challenge (Active Intent: Success Screen is the end of a Challenge) -->
+<a class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-2xl px-5 py-2 scale-105 shadow-inner transition-transform duration-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="grid_view">grid_view</span>
+<span class="font-manrope text-[10px] font-medium tracking-widest uppercase">挑战</span>
+</a>
+<!-- Achievements -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 px-5 py-2 hover:scale-110 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="emoji_events">emoji_events</span>
+<span class="font-manrope text-[10px] font-medium tracking-widest uppercase">成就</span>
+</a>
+</div>
+</div>
+</nav>
+</body></html>

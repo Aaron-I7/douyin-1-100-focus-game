@@ -5,13 +5,11 @@
  * 需求: 4.1, 4.6
  * - 管理自选模式解锁状态
  * - 检查解锁条件（完成第二关）
- * - 与云端数据存储集成
+ * - 使用本地存储保存状态
  */
 
 class UnlockSystem {
-  constructor(cloudStorage = null) {
-    this.cloudStorage = cloudStorage;
-    
+  constructor() {
     // 解锁状态
     this.unlockStates = {
       customMode: false
@@ -36,29 +34,17 @@ class UnlockSystem {
 
   /**
    * 解锁自选模式
-   * @param {boolean} saveToCloud - 是否保存到云端
-   * @returns {Promise<boolean>} 解锁是否成功
+   * @returns {boolean} 解锁是否成功
    */
-  async unlockCustomMode(saveToCloud = true) {
+  unlockCustomMode() {
     try {
       // 设置本地解锁状态
       this.unlockStates.customMode = true;
       
       console.log('自选模式已解锁');
       
-      // 保存到云端（如果有云存储服务）
-      if (saveToCloud && this.cloudStorage) {
-        try {
-          await this.cloudStorage.saveProgress({
-            customModeUnlocked: true,
-            unlockTime: Date.now()
-          });
-          console.log('解锁状态已保存到云端');
-        } catch (error) {
-          console.warn('保存解锁状态到云端失败，但本地解锁成功:', error);
-          // 即使云端保存失败，本地解锁仍然有效
-        }
-      }
+      // 保存到本地存储
+      this.saveToLocal();
       
       return true;
     } catch (error) {
@@ -158,31 +144,71 @@ class UnlockSystem {
 
   /**
    * 重置所有解锁状态（用于测试或重置游戏）
-   * @param {boolean} saveToCloud - 是否保存到云端
-   * @returns {Promise<boolean>} 重置是否成功
+   * @returns {boolean} 重置是否成功
    */
-  async resetUnlockStates(saveToCloud = false) {
+  resetUnlockStates() {
     try {
       this.unlockStates.customMode = false;
       
       console.log('解锁状态已重置');
       
-      // 保存到云端（如果需要）
-      if (saveToCloud && this.cloudStorage) {
-        try {
-          await this.cloudStorage.saveProgress({
-            customModeUnlocked: false,
-            resetTime: Date.now()
-          });
-          console.log('重置状态已保存到云端');
-        } catch (error) {
-          console.warn('保存重置状态到云端失败:', error);
-        }
-      }
+      // 保存到本地存储
+      this.saveToLocal();
       
       return true;
     } catch (error) {
       console.error('重置解锁状态失败:', error);
+      return false;
+    }
+  }
+
+  /**
+   * 保存到本地存储
+   */
+  saveToLocal() {
+    try {
+      const data = {
+        customModeUnlocked: this.unlockStates.customMode,
+        updateTime: Date.now()
+      };
+      
+      if (typeof tt !== 'undefined' && tt.setStorageSync) {
+        // 抖音小游戏 API: tt.setStorageSync(key, data)
+        tt.setStorageSync('unlock_states', JSON.stringify(data));
+      } else if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('unlock_states', JSON.stringify(data));
+      }
+      
+      console.log('解锁状态已保存到本地');
+    } catch (error) {
+      console.error('保存解锁状态到本地失败:', error);
+    }
+  }
+
+  /**
+   * 从本地存储加载
+   */
+  loadFromLocal() {
+    try {
+      let dataStr = null;
+      
+      if (typeof tt !== 'undefined' && tt.getStorageSync) {
+        // 抖音小游戏 API: tt.getStorageSync(key)
+        dataStr = tt.getStorageSync('unlock_states');
+      } else if (typeof localStorage !== 'undefined') {
+        dataStr = localStorage.getItem('unlock_states');
+      }
+      
+      if (dataStr) {
+        const data = JSON.parse(dataStr);
+        this.unlockStates.customMode = data.customModeUnlocked || false;
+        console.log('解锁状态已从本地加载:', this.unlockStates);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('从本地加载解锁状态失败:', error);
       return false;
     }
   }
@@ -205,14 +231,6 @@ class UnlockSystem {
     return {
       ...this.unlockConditions
     };
-  }
-
-  /**
-   * 设置云存储服务
-   * @param {Object} cloudStorage - 云存储服务实例
-   */
-  setCloudStorage(cloudStorage) {
-    this.cloudStorage = cloudStorage;
   }
 }
 

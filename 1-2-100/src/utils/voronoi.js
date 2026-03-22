@@ -268,7 +268,7 @@ class FortuneVoronoi {
  * @param {number}  [relax=2]   Lloyd 松弛迭代次数（越大越均匀）
  * @returns {{ cx, cy, poly }[]}
  */
-export function computeVoronoi(n, width, height, relax = 2) {
+function computeVoronoi(n, width, height, relax = 2) {
   // 1. 随机初始种子点（使用泊松盘风格网格抖动，避免聚堆）
   let pts = poissonGrid(n, width, height);
 
@@ -365,3 +365,7 @@ function centroid(poly) {
   }
   return { x: ax / (6 * area), y: ay / (6 * area) };
 }
+
+module.exports = {
+  computeVoronoi
+};

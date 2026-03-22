@@ -1,9 +1,7 @@
-/**
- * 抖音小游戏 - 1-100 专注力训练游戏
- * 所有代码合并版本
- */
+﻿const { getSidebarRewardSystem } = require('./src/core/services/services-sidebar-reward-system');
+const sidebarRewardSystem = getSidebarRewardSystem();
+console.log('[Game] Sidebar reward system initialized');
 
-console.log('1-100 专注力训练游戏启动中...');
 const TransitionManager = require('./src/core/state/state-transition-manager-legacy');
 const ScreenAdapter = require('./src/core/ui/ui-screen-adapter-legacy');
 const { gameUIFlowMethods } = require('./src/core/services/services-game-manager-ui-flow-legacy');
@@ -17,7 +15,7 @@ class GameManager {
     this.ctx = ctx;
     this.screenAdapter = screenAdapter;
     this.state = 'menu';
-    this.mode = 'bright'; // 始终使用明亮模式
+    this.mode = 'bright';
     this.difficulty = 180;
     this.currentNumber = 1;
     this.errors = 0;
@@ -35,14 +33,40 @@ class GameManager {
     this.transitionManager = null;
     this.currentScreen = 'start';
     this.selectedCustomMode = null; // 存储选择的自选模式 (10 或 100)
+    this.gameplayModes = {
+      SIMPLE: 'simple',
+      HARD: 'hard',
+      HELL: 'hell'
+    };
+    this.gameplayMode = this.gameplayModes.SIMPLE;
+    this.gameplayModeStorageKey = 'gameplay_mode_100';
+    this.pending100ModeStart = null;
     
-    // 新增：抖音云服务
-    this.authService = null;
-    this.cloudStorageService = null;
-    this.userProfileManager = null;
-    this.shareManager = null; // 分享管理器
+    // 本地与云端挑战状态
+    this.userId = null;
+    this.shareManager = null;
     this.isUserDataLoaded = false;
+    this.openId = null;
+    this.activeDailySession = null;
+    this.dailyChallengeState = {
+      freeTotal: 3,
+      freeUsed: 0,
+      freeLeft: 3,
+      passedToday: false,
+      canStart: true
+    };
+    this.homeStats = {
+      challengeCount: 12543,
+      todayPassCount: 842,
+      freePlayLeft: 3
+    };
+    this.remoteLeaderboardByMode = null;
+    this.isRefreshingHomeData = false;
+    this.reviveAdUnitId = 'adunit-revive-placeholder';
+    this.cloudServiceId = '1lvp8d2ttobac';
+    this.cloudEnvId = 'env-0htS8jdpdB';
     this.startupPromptDisabled = false;
+    this.reducedMotionEnabled = false;
     this.pendingContinueLevel = 1;
   }
 

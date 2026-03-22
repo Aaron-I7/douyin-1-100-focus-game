@@ -74,7 +74,7 @@ class UIManagerWithFonts {
     this.applyFont('title', dims.fontSize * 2.2, 'bold');
     
     // 设置文字样式
-    ctx.fillStyle = this.themeSystem?.getThemeColors().primary || '#FF6B6B';
+    ctx.fillStyle = (this.themeSystem && this.themeSystem.getThemeColors().primary) || '#FF6B6B';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
@@ -95,7 +95,7 @@ class UIManagerWithFonts {
 
     // 绘制副标题（使用 UI 字体）
     this.applyFont('ui', dims.fontSize * 0.9, 'normal');
-    ctx.fillStyle = this.themeSystem?.getThemeColors().secondary || '#4ECDC4';
+    ctx.fillStyle = (this.themeSystem && this.themeSystem.getThemeColors().secondary) || '#4ECDC4';
     ctx.fillText('专注力训练游戏', centerX, titleY + dims.fontSize * 1.8);
   }
 
@@ -348,7 +348,7 @@ class UIManagerWithFonts {
     const { x, y, width, height, text, type = 'primary', fontSize } = config;
     
     // 获取主题颜色
-    const colors = this.themeSystem?.getThemeColors() || {
+    const colors = (this.themeSystem && this.themeSystem.getThemeColors()) || {
       primary: '#FF6B6B',
       secondary: '#4ECDC4'
     };

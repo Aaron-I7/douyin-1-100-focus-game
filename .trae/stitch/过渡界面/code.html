@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed": "#cbe8e6",
+              "surface-container-highest": "#dde4e1",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-fixed": "#294443",
+              "primary": "#426564",
+              "error-container": "#fa746f",
+              "background": "#f8faf8",
+              "on-background": "#2d3432",
+              "on-tertiary": "#fff7f3",
+              "surface-bright": "#f8faf8",
+              "tertiary-container": "#fde7d3",
+              "on-tertiary-container": "#635445",
+              "outline": "#757c7a",
+              "on-secondary": "#e1fffd",
+              "on-tertiary-fixed": "#504234",
+              "secondary": "#496463",
+              "on-primary-fixed-variant": "#3e6261",
+              "primary-container": "#c4eae8",
+              "inverse-on-surface": "#9b9d9c",
+              "on-surface": "#2d3432",
+              "surface-container": "#eaefec",
+              "tertiary-fixed": "#fde7d3",
+              "primary-fixed": "#c4eae8",
+              "on-tertiary-fixed-variant": "#6d5e4f",
+              "error": "#a83836",
+              "inverse-surface": "#0b0f0e",
+              "surface-container-low": "#f1f4f2",
+              "primary-fixed-dim": "#b6dcda",
+              "on-secondary-fixed-variant": "#45605f",
+              "on-error": "#fff7f6",
+              "on-error-container": "#6e0a12",
+              "surface-dim": "#d4dcd9",
+              "secondary-container": "#cbe8e6",
+              "on-surface-variant": "#59615f",
+              "tertiary-dim": "#5f5142",
+              "on-primary": "#e0fffe",
+              "error-dim": "#67040d",
+              "tertiary": "#6c5c4d",
+              "surface-container-high": "#e4e9e7",
+              "on-primary-container": "#345857",
+              "surface-tint": "#426564",
+              "on-primary-fixed": "#214544",
+              "surface-variant": "#dde4e1",
+              "on-secondary-container": "#3c5755",
+              "surface": "#f8faf8",
+              "inverse-primary": "#d7fefc",
+              "secondary-dim": "#3d5857",
+              "outline-variant": "#acb3b1",
+              "tertiary-fixed-dim": "#eed9c6",
+              "secondary-fixed-dim": "#bddad8",
+              "primary-dim": "#365958"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .neomorphic-card {
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.05), -8px -8px 16px rgba(255, 255, 255, 0.8);
+        }
+        .neomorphic-tile-inset {
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.05), inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+        }
+        .neomorphic-button {
+            box-shadow: 6px 6px 12px rgba(66, 101, 100, 0.2), -6px -6px 12px rgba(255, 255, 255, 0.9);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col items-center overflow-x-hidden">
+<!-- Top Navigation Anchor -->
+<header class="w-full pt-2 px-4 sticky top-0 z-50">
+<div class="flex justify-between items-center w-full max-w-2xl mx-auto bg-surface shadow-[4px_4px_10px_rgba(0,0,0,0.05),-4px_-4px_10px_rgba(255,255,255,0.8)] rounded-full px-6 py-3">
+<button class="flex items-center justify-center w-10 h-10 hover:bg-surface-container-high transition-all scale-95 active:duration-150 rounded-full">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+<h1 class="font-manrope text-headline-md font-semibold text-primary tracking-wide">舒尔特方格</h1>
+<button class="flex items-center justify-center w-10 h-10 hover:bg-surface-container-high transition-all scale-95 active:duration-150 rounded-full">
+<span class="material-symbols-outlined text-primary">settings</span>
+</button>
+</div>
+</header>
+<!-- Main Transition Canvas -->
+<main class="flex-1 w-full max-w-2xl px-6 py-12 flex flex-col items-center justify-center relative">
+<!-- Background Soft Textures (Editorial Decor) -->
+<div class="absolute top-20 -left-20 w-64 h-64 bg-primary-container/20 rounded-full blur-[80px] -z-10"></div>
+<div class="absolute bottom-40 -right-20 w-80 h-80 bg-secondary-container/30 rounded-full blur-[100px] -z-10"></div>
+<!-- Progress Indicator (1/2 to 2/2 feel) -->
+<div class="w-full mb-16 flex flex-col gap-4">
+<div class="flex justify-between items-end">
+<span class="font-label text-label-md tracking-widest text-on-surface-variant uppercase">进度里程碑</span>
+<span class="font-headline text-headline-md text-primary font-bold">1/2</span>
+</div>
+<div class="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden neomorphic-tile-inset">
+<div class="h-full bg-primary rounded-full transition-all duration-1000 ease-out" style="width: 50%;"></div>
+</div>
+</div>
+<!-- Success Message Section -->
+<div class="text-center mb-12">
+<div class="inline-flex items-center justify-center w-24 h-24 mb-8 bg-surface-container-lowest rounded-[2.5rem] neomorphic-card">
+<span class="material-symbols-outlined text-[3.5rem] text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h2 class="font-headline text-display-lg text-on-surface font-medium leading-tight mb-4 tracking-tight">第一关已完成</h2>
+<p class="font-body text-title-lg text-on-surface-variant opacity-80 max-w-sm mx-auto">太棒了！你的专注力正在提升。</p>
+</div>
+<!-- Stats Bento Grid (High-end Editorial Layout) -->
+<div class="grid grid-cols-2 gap-4 w-full mb-16">
+<div class="bg-surface-container-low p-6 rounded-[2rem] neomorphic-card flex flex-col items-start gap-2 group hover:scale-[1.02] transition-transform duration-300">
+<span class="material-symbols-outlined text-primary opacity-60">schedule</span>
+<span class="font-label text-label-md tracking-widest text-on-surface-variant uppercase">总耗时</span>
+<span class="font-headline text-headline-lg text-on-surface font-bold">15s</span>
+</div>
+<div class="bg-surface-container-low p-6 rounded-[2rem] neomorphic-card flex flex-col items-start gap-2 group hover:scale-[1.02] transition-transform duration-300">
+<span class="material-symbols-outlined text-primary opacity-60">target</span>
+<span class="font-label text-label-md tracking-widest text-on-surface-variant uppercase">准确率</span>
+<span class="font-headline text-headline-lg text-on-surface font-bold">100%</span>
+</div>
+</div>
+<!-- Action Button -->
+<div class="w-full flex justify-center mt-auto">
+<button class="group relative flex items-center justify-between gap-8 bg-primary text-on-primary font-headline text-title-lg font-bold px-10 py-6 rounded-full neomorphic-button hover:scale-105 active:scale-95 transition-all duration-300 cubic-bezier(0.34,1.56,0.64,1) overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary to-primary-container opacity-20 transition-opacity group-hover:opacity-40"></div>
+<span class="relative z-10">进入第二关</span>
+<span class="material-symbols-outlined relative z-10 text-3xl group-hover:translate-x-2 transition-transform">arrow_forward</span>
+</button>
+</div>
+</main>
+<!-- Bottom Navigation Shell (Relevance Check: Top Level Destination) -->
+<nav class="fixed bottom-0 left-0 right-0 z-50">
+<div class="flex justify-around items-center w-full max-w-2xl mx-auto mb-8 mx-8 bg-surface-container-low/70 backdrop-blur-xl floating pill rounded-[2rem] py-3 shadow-[8px_8px_16px_rgba(0,0,0,0.08),-8px_-8px_16px_rgba(255,255,255,0.9)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 px-5 py-2 hover:scale-110 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-manrope text-label-md font-medium tracking-widest uppercase">首页</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-2xl px-5 py-2 scale-105 shadow-inner transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="font-manrope text-label-md font-medium tracking-widest uppercase">挑战</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 px-5 py-2 hover:scale-110 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined">emoji_events</span>
+<span class="font-manrope text-label-md font-medium tracking-widest uppercase">成就</span>
+</a>
+</div>
+</nav>
+</body></html>

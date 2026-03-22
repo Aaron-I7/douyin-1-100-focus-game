@@ -1,19 +1,15 @@
-/**
- * @param params 调用参数，HTTP 请求下为请求体
- * @param context 调用上下文
- *
- * @return 函数的返回数据，HTTP 场景下会作为 Response Body
- *
- */
-const { dySDK } = require("@open-dy/node-server-sdk");
+const { ok } = require('./_shared');
+const { dySDK } = require('@open-dy/node-server-sdk');
 
-module.exports = async function (params, context) {
-  const serviceContext = dySDK.context(context);
-  const reqContext = serviceContext.getContext();
-  context.log("openId", reqContext?.openId);
-  return {
-    code: 0,
-    message: "",
-    data: reqContext?.openId,
-  };
+module.exports = async function getOpenId(params, context) {
+  let openId = '';
+  try {
+    const serviceContext = dySDK.context(context);
+    const reqContext = serviceContext.getContext();
+    openId = reqContext && reqContext.openId ? reqContext.openId : '';
+  } catch (error) {
+    openId = '';
+  }
+
+  return ok(openId);
 };

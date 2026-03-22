@@ -12,117 +12,176 @@ class TransitionManager {
     this.fadeOpacity = 0;
     this.textScale = 1;
     this.particleEffects = [];
+    this.nextLevelTimeLimitSec = 10 * 60;
   }
 
-  showLevelTransition(fromLevel, toLevel, onComplete) {
+  showLevelTransition(fromLevel, toLevel, onComplete, options = {}) {
+    this.width = this.canvas.width;
+    this.height = this.canvas.height;
     this.isTransitioning = true;
     this.transitionType = 'levelComplete';
     this.transitionStartTime = Date.now();
+    // Reduce transition duration since it's just a floating text overlay now
+    this.transitionDuration = 1500;
     this.onTransitionComplete = onComplete;
     this.fromLevel = fromLevel;
     this.toLevel = toLevel;
-    this.generateCelebrationParticles();
+    this.nextLevelTimeLimitSec = Number(options.nextLevelTimeLimitSec) > 0 ? Number(options.nextLevelTimeLimitSec) : 10 * 60;
+    this.fadeOpacity = 0;
+    this.textScale = 0.5;
+    this.particleEffects = [];
+    // Create subtle particles for the floating text
+    this.createParticles(15);
     console.log(`Starting transition from level ${fromLevel} to level ${toLevel}`);
   }
 
-  generateCelebrationParticles() {
+  createParticles(count) {
     this.particleEffects = [];
-    const particleCount = 20;
-    for (let i = 0; i < particleCount; i++) {
+    for (let i = 0; i < count; i++) {
       this.particleEffects.push({
-        x: Math.random() * this.width,
-        y: Math.random() * this.height,
-        vx: (Math.random() - 0.5) * 4,
-        vy: (Math.random() - 0.5) * 4,
-        size: Math.random() * 6 + 2,
-        color: this.getRandomColor(),
-        life: 1.0,
-        decay: 0.02
+        x: this.width / 2 + (Math.random() - 0.5) * 100,
+        y: this.height / 2 + (Math.random() - 0.5) * 100,
+        vx: (Math.random() - 0.5) * 5,
+        vy: (Math.random() - 0.5) * 5 - 2, // slight upward drift
+        life: 1,
+        decay: 0.01 + Math.random() * 0.02,
+        size: Math.random() * 3 + 1,
+        color: ['#426564', '#cbe8e6', '#f1f4f2'][Math.floor(Math.random() * 3)]
       });
     }
   }
 
-  getRandomColor() {
-    const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
-    return colors[Math.floor(Math.random() * colors.length)];
-  }
 
-  update() {
+  update(deltaTime = 16) {
     if (!this.isTransitioning) return;
-    const elapsed = Date.now() - this.transitionStartTime;
-    const progress = Math.min(elapsed / this.transitionDuration, 1);
-    if (progress < 0.5) {
-      this.fadeOpacity = progress * 2;
-      this.textScale = 0.5 + (progress * 2) * 0.5;
+    const now = Date.now();
+    const elapsed = now - this.transitionStartTime;
+    this.transitionProgress = Math.min(elapsed / this.transitionDuration, 1);
+    
+    // Animation easing
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+    const easeInOutQuad = (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    
+    if (this.transitionProgress < 0.2) {
+      // Fade in
+      this.fadeOpacity = this.transitionProgress / 0.2;
+      this.textScale = 0.8 + easeOutCubic(this.transitionProgress / 0.2) * 0.2;
+    } else if (this.transitionProgress > 0.8) {
+      // Fade out
+      this.fadeOpacity = 1 - (this.transitionProgress - 0.8) / 0.2;
+      this.textScale = 1 + easeInOutQuad((this.transitionProgress - 0.8) / 0.2) * 0.1;
     } else {
-      this.fadeOpacity = 2 - (progress * 2);
+      // Hold
+      this.fadeOpacity = 1;
       this.textScale = 1;
     }
-    this.updateParticles();
-    if (progress >= 1) {
+    
+    // Update particles
+    this.particleEffects.forEach(p => {
+      p.x += p.vx * (deltaTime / 16);
+      p.y += p.vy * (deltaTime / 16);
+      p.vy += 0.1; // gravity
+      p.life -= 0.01 * (deltaTime / 16);
+      if (p.life < 0) p.life = 0;
+    });
+    
+    if (this.transitionProgress >= 1) {
       this.isTransitioning = false;
-      if (this.onTransitionComplete) {
+      if (typeof this.onTransitionComplete === 'function') {
         this.onTransitionComplete();
       }
     }
-  }
-
-  updateParticles() {
-    this.particleEffects = this.particleEffects.filter((particle) => {
-      particle.x += particle.vx;
-      particle.y += particle.vy;
-      particle.life -= particle.decay;
-      return particle.life > 0;
-    });
   }
 
   render() {
     if (!this.isTransitioning) return;
     const ctx = this.ctx;
     ctx.save();
-    ctx.fillStyle = `rgba(0, 0, 0, ${this.fadeOpacity * 0.7})`;
+    // Dark background (Zinc-950)
+    ctx.fillStyle = `rgba(24, 24, 27, ${0.98 * this.fadeOpacity})`;
     ctx.fillRect(0, 0, this.width, this.height);
+    
     this.renderParticles();
     this.renderTransitionText();
     ctx.restore();
   }
 
   renderParticles() {
-    const ctx = this.ctx;
-    this.particleEffects.forEach((particle) => {
-      ctx.save();
-      ctx.globalAlpha = particle.life * this.fadeOpacity;
-      ctx.fillStyle = particle.color;
-      ctx.beginPath();
-      ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    });
+    // No particles in the requested design
+  }
+
+  roundRect(ctx, x, y, width, height, radius) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
   }
 
   renderTransitionText() {
     const ctx = this.ctx;
     const centerX = this.width / 2;
     const centerY = this.height / 2;
+    
     ctx.save();
     ctx.globalAlpha = this.fadeOpacity;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    let mainText = '';
-    let subText = '';
-    if (this.fromLevel === 1 && this.toLevel === 2) {
-      mainText = '🎉 第一关完成！';
-      subText = '难度飙升！！！';
-    } else if (this.fromLevel === 2) {
-      mainText = '🏆 全部完成！';
-      subText = '恭喜通关！';
+    
+    const minutes = Math.max(1, Math.round((Number(this.nextLevelTimeLimitSec) || (10 * 60)) / 60));
+    let mainText = '\u6700\u540e\u4e00\u5173!';
+    let subText = `1 \u2192 100 \u00b7 \u9650\u65f6${minutes}\u5206\u949f`;
+    let statusText = '\u51c6\u5907\u4e2d...';
+    
+    if (this.fromLevel === 2) {
+      mainText = '\u5168\u90e8\u5b8c\u6210!';
+      subText = '\u606d\u559c\u901a\u5173';
+      statusText = '';
     }
-    ctx.fillStyle = '#FFD700';
-    ctx.font = `bold ${Math.floor(this.width * 0.08 * this.textScale)}px Arial, sans-serif`;
-    ctx.fillText(mainText, centerX, centerY - 30);
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = `${Math.floor(this.width * 0.05 * this.textScale)}px Arial, sans-serif`;
-    ctx.fillText(subText, centerX, centerY + 30);
+    
+    // Main Title: Soft Gradient (Amber -> Orange -> Red)
+    // Shifted up significantly to avoid overlap with subtext
+    ctx.font = `800 ${Math.floor(this.width * 0.13 * this.textScale)}px "Manrope", "PingFang SC", sans-serif`;
+    const grad = ctx.createLinearGradient(centerX - 100, centerY - 80, centerX + 100, centerY - 20);
+    grad.addColorStop(0, '#fcd34d'); // Amber-300
+    grad.addColorStop(0.5, '#fbbf24'); // Amber-400
+    grad.addColorStop(1, '#f87171'); // Red-400 (Soft)
+    ctx.fillStyle = grad;
+    
+    // Text Shadow/Glow (Subtle)
+    ctx.shadowColor = 'rgba(251, 191, 36, 0.3)';
+    ctx.shadowBlur = 20;
+    ctx.fillText(mainText, centerX, centerY - 100); // Moved up from -80 to -100
+    
+    // Reset shadow
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    
+    // Subtext: Soft Blue-Grey
+    ctx.fillStyle = '#93c5fd'; // Blue-300
+    ctx.font = `500 ${Math.floor(this.width * 0.05 * this.textScale)}px "Manrope", "PingFang SC", sans-serif`;
+    ctx.fillText(subText, centerX, centerY + 40); // Moved down from +20 to +40
+    
+    // Status: Grey (Delayed appearance)
+    const elapsed = Date.now() - this.transitionStartTime;
+    const delay = 600; // 600ms delay
+    
+    if (statusText && elapsed > delay) {
+       // Separate fade in for status
+       const statusOpacity = Math.min(1, (elapsed - delay) / 300);
+       
+       ctx.globalAlpha = this.fadeOpacity * statusOpacity;
+       ctx.fillStyle = '#71717a'; // Zinc-500
+       ctx.font = `400 ${Math.floor(this.width * 0.035 * this.textScale)}px "Manrope", "PingFang SC", sans-serif`;
+       ctx.fillText(statusText, centerX, centerY + 130); // Moved down from +100 to +130
+    }
+    
     ctx.restore();
   }
 
@@ -133,6 +192,7 @@ class TransitionManager {
   stop() {
     this.isTransitioning = false;
     this.particleEffects = [];
+    this.nextLevelTimeLimitSec = 10 * 60;
   }
 }
 

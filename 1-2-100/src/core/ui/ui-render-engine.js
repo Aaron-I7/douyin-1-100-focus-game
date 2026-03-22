@@ -546,6 +546,18 @@ class RenderEngine {
     }
   }
 
+  applyReducedMotion(enabled) {
+    const reducedMotion = !!enabled;
+    if (this.animationIntegration) {
+      if (reducedMotion) {
+        this.animationIntegration.enableReducedMotion();
+      } else {
+        this.animationIntegration.disableReducedMotion();
+      }
+    }
+    this.setAnimationSettings({ reducedMotion });
+  }
+
   /**
    * 暂停动画
    */
